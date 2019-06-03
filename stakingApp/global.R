@@ -1,3 +1,13 @@
 library(shiny)
 library(leaflet)
 library(dplyr)
+library(shinythemes)
+library(shinyalert)
+library(osrm)
+library(rgdal)
+library(sp)
+library(sf)
+library(viridis)
+
+data_file <- file.path(getwd(), "staking_data.rds")
+df <- readRDS(data_file)
