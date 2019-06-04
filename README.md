@@ -11,20 +11,20 @@ For my people outside of my organization, this product is super tailored to our 
 Use R console with Rtools & and the Install Packages [command](https://www.r-bloggers.com/installing-r-packages/) to install the following:
 
 ```bash
-install.packages(shiny)
-install.packages(leaflet)
-install.packages(dplyr)
-install.packages(shinythemes)
-install.packages(shinyalert)
-install.packages(osrm)
-install.packages(rgdal)
-install.packages(sp)
-install.packages(sf)
-install.packages(viridis)
-install.packages(tidyverse)
-install.packages(ggmap)
-install.packages(DT)
-install.packages(knitr)
+install.packages('shiny')
+install.packages('leaflet')
+install.packages('dplyr')
+install.packages('shinythemes')
+install.packages('shinyalert')
+install.packages('osrm')
+install.packages('rgdal')
+install.packages('sp')
+install.packages('sf')
+install.packages('viridis')
+install.packages('tidyverse')
+install.packages('ggmap')
+install.packages('DT')
+install.packages('knitr')
 ```
 
 Check you have them in the R console like so:
