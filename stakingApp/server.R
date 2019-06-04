@@ -108,8 +108,9 @@ server <- function(input,output, session){
         pal <- colorFactor(viridis::viridis(nrow(isochrone), direction = -1), 
                            isochrone$steps)
         leafletProxy("map") %>%
-            clearShapes() %>% 
-            clearMarkers() %>%
+            clearShapes() %>%
+            #I think if I remove the clear marker part it won't flush my staking markers
+            #clearMarkers() %>%
             clearControls() %>%
             addPolygons(data = isochrone,
                         weight = .5, 
@@ -119,7 +120,8 @@ server <- function(input,output, session){
                       values = ~steps,
                       title = 'Drive Time (min.)',
                       opacity = 1) %>%
-            addMarkers(lng = input$lon, input$lat) %>%
+            # Surely i don't need to add a marker for this one?
+            #addMarkers(lng = input$lon, input$lat) %>%
             setView(isoCoords()[['lon']], isoCoords()[['lat']], zoom = 9)
     })
 }
