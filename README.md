@@ -11,20 +11,20 @@ For my people outside of my organization, this product is super tailored to our 
 Use R console with Rtools & and the Install Packages [command](https://www.r-bloggers.com/installing-r-packages/) to install the following:
 
 ```bash
-install.packages(shiny)
-install.packages(leaflet)
-install.packages(dplyr)
-install.packages(shinythemes)
-install.packages(shinyalert)
-install.packages(osrm)
-install.packages(rgdal)
-install.packages(sp)
-install.packages(sf)
-install.packages(viridis)
-install.packages(tidyverse)
-install.packages(ggmap)
-install.packages(DT)
-install.packages(knitr)
+install.packages('shiny')
+install.packages('leaflet')
+install.packages('dplyr')
+install.packages('shinythemes')
+install.packages('shinyalert')
+install.packages('osrm')
+install.packages('rgdal')
+install.packages('sp')
+install.packages('sf')
+install.packages('viridis')
+install.packages('tidyverse')
+install.packages('ggmap')
+install.packages('DT')
+install.packages('knitr')
 ```
 
 Check you have them in the R console like so:
@@ -134,7 +134,7 @@ YOU ONLY!!**
 
 * Project admins have locked down access to the master branch, any attempts to push and pull directly from there without authorization from the Administrators will be denied/removed.
 
-* Play nicely- rudeness, obscenities and general misocnduct will result in the **BAN-HAMMER** coming into effect.
+* Play nicely- rudeness, obscenities and general misconduct will result in the **BAN-HAMMER** coming into effect.
 
 Please make sure to update tests as appropriate, do not push any network specific information, these requests will be deleted if there is any information deemed sensitive. Contact GISJohnECS@gmail.com for more questions on what we deem as sensitive.
 
