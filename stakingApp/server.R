@@ -3,15 +3,15 @@ server <- function(input,output, session){
     data <- reactive({
         x <- df
     })
-    
-    ########################################################
+}
+    ########################################################   
     # Name:
     # Description:
     # Created:
     # Author:
     output$mymap <- renderLeaflet({
         df <- data()
-        
+    
         #Isochrone Functions
         isoCoords <- reactive({
             coords <- c(lat = input$lat,
@@ -30,7 +30,26 @@ server <- function(input,output, session){
             )
             isochrone
         })
-        
+        #Adding in the Code They used in R server to make their table, and changing it to make ours
+        output$UserAppointmentsTable <- renderUI({
+            locations <- routeVehicleLocations()
+            if (length(locations) == 0 || nrow(locations) == 0)
+                return(NULL)
+            
+            
+            #Day classification Filter
+            #changed the output to $day_class
+            output$day_class <- renderUI({
+                #dont know exactly what to do with the line below 
+                live_vehicles <- getMetroData("VehicleLocations/0")
+                #added in df$day_class into all appropriate places where routeSelect was initially
+                df$day_class <- sort(unique(as.numeric(live_vehicles$Route)))
+                # Add names, so that we can add all=0
+                names(df$day_class) <- df$day_class
+                df$day_class <- c(All = 0, df$day_class )
+                selectInput("day_class", "Days Until Appointment", choices = df$day_class , selected = df$day_class[0])
+            })
+            
         ########################################################
         # Name:
         # Description:
