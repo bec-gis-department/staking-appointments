@@ -28,10 +28,13 @@ body <- dashboardBody(
            # You can build a table using the following example https://shiny.rstudio.com/reference/shiny/0.12.1/tableOutput.html
            # you will need to find where they feed the data to this ui object in server.R and replace with our laoded df data
            # The csv data is already loaded in the df variable and you can reference the values with a $ EG df$jobname brings in the jobname
-           box(width = NULL,
-               uiOutput("numVehiclesTable")
-           )
+          ##Appointment Time Table
+            box(width = NULL,
+               uiOutput("UserAppointmentsTable")
+            )
     ),
+    
+            
     
     #################################################
     # Development Request from John Lister
@@ -43,18 +46,21 @@ body <- dashboardBody(
     #               You will probably need to do some work in the server.R file
     column(width = 3,
            box(width = NULL, status = "warning",
-               #This is a ui function, you will need to see where this references in their server.R file
-               uiOutput("routeSelect"),
-               #they use a multiple choice checkbox, we want a multiple choice dropdown
-               checkboxGroupInput("directions", "Show",
+               #Changed uioutput to "dayClassification"
+               uiOutput("dayClassification"),
+               #Changed from multiple choice checkbox to multiple choice dropdown
+               dropdownGroupInput("directions", "Show",
+               #Changed choices to days until appointments
                                   choices = c(
-                                    Northbound = 4,
-                                    Southbound = 1,
-                                    Eastbound = 2,
-                                    Westbound = 3
+                                    "4 Buisness Days" = 4,
+                                    "Next Buisness Day" = 1,
+                                    "2 Buisness Days" = 2,
+                                    "3 Buisness Days" = 3,
+                                    "Today" = 0,
+                #added "today" as a choice and the default choice so the first show appointments are the ones on that particular day
                                   ),
                                   #Defaults what is selected
-                                  selected = c(1, 2, 3, 4)
+                                  selected = c(0,1, 2, 3, 4,)
                ),
                p(
                  class = "text-muted",
