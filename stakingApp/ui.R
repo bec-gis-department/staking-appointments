@@ -28,10 +28,10 @@ body <- dashboardBody(
                    selectInput("dayClassification", "Days until Appointment",
                                    choices = c(
                                      "Today" = 0,
-                                     "Next Buisness Day" = 1,
-                                     "2 Buisness Days" = 2,
-                                     "3 Buisness Days" = 3,
-                                     "4 Buisness Days" = 4
+                                     "Next Business Day" = 1,
+                                     "2 Business Days" = 2,
+                                     "3 Business Days" = 3,
+                                     "4 Business Days" = 4
                                   ),
                                  #Makes Today the one selected
                                   selected = 0
