@@ -1,6 +1,6 @@
 ui <- fluidPage()
 #Importing Source code for Shiny-Bus Template 
-# Found this example here https://shiny.rstudio.com/gallery/bus-dashboard.html
+#librar Found this example here https://shiny.rstudio.com/gallery/bus-dashboard.html
 library(shinydashboard)
 library(leaflet)
 header <- dashboardHeader(
@@ -46,28 +46,31 @@ body <- dashboardBody(
     #               You will probably need to do some work in the server.R file
     column(width = 3,
            box(width = NULL, status = "warning",
+     ############# First attempt##################################################         
                #Changed uioutput to "dayClassification"
-               uiOutput("dayClassification"),
+           uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
-               dropdownGroupInput("directions", "Show",
-               #Changed choices to days until appointments
-                                  choices = c(
-                                    "4 Buisness Days" = 4,
-                                    "Next Buisness Day" = 1,
-                                    "2 Buisness Days" = 2,
-                                    "3 Buisness Days" = 3,
-                                    "Today" = 0,
-                #added "today" as a choice and the default choice so the first show appointments are the ones on that particular day
+               #Added Today with a value of 0      
+                   selectInput("dayClassification", "Days until Appointment",
+                                   choices = c(
+                                     "Today" = 0,
+                                     "Next Buisness Day" = 1,
+                                     "2 Buisness Days" = 2,
+                                     "3 Buisness Days" = 3,
+                                     "4 Buisness Days" = 4
                                   ),
-                                  #Defaults what is selected
-                                  selected = c(0,1, 2, 3, 4,)
+                                 #Makes Today the one selected
+                                  selected = 0
+     
+     
                ),
+     ####################################################################################
+     
                p(
                  class = "text-muted",
-                 paste("Note: a route number can have several different trips, each",
-                       "with a different path. Only the most commonly-used path will",
-                       "be displayed on the map."
-                 )
+                 #removed the below paragraph for now"
+                 paste("")
+                 
                ),
                #Here is their action button that calls something from their server.R script, ideally I want ours to update on click
                # BUT I say just get it working before we add that type of event
