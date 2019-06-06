@@ -1,49 +1,23 @@
-ui <- fluidPage()
-#Importing Source code for Shiny-Bus Template 
-#librar Found this example here https://shiny.rstudio.com/gallery/bus-dashboard.html
-library(shinydashboard)
-library(leaflet)
+# UI File contains Look & Layout for the application
 header <- dashboardHeader(
-#Changing Title to "Staking Appointments"
-  title = "Staking Appointments"
-)
+              title = "Staking Appointments"
+          )
 
 body <- dashboardBody(
   fluidRow(
     column(width = 9,
            box(width = NULL, solidHeader = TRUE,
                #Embeding our map into the map tag
-               leafletOutput("mymap", height = 1000)
+               #Key Note: John Lister 06/05/2019)
+                  #Changed the map tag value to be "Map"
+                  #This was the only way the Event Observation would work
+               leafletOutput("map", height = 1000)
            ),
-           #################################################
-           # Development Request from John Lister
-           # Date: 06/04/2019
-           # Description: This segment here is where I want to have a table showing the user the Appointments with a business_day value of 0
-           # Table primary Row ID needs to be the staker, and the Column titles the Appointment Time, See example below
-           #    |08:00 | 9:00| 10:00| 11:00| 12:00|
-           # ABC|      |     |      |      |      |
-           # DEF|      |     |      |      |      |
-           # HIJ|      |     |      |      |      |
-           #
-           # You can build a table using the following example https://shiny.rstudio.com/reference/shiny/0.12.1/tableOutput.html
-           # you will need to find where they feed the data to this ui object in server.R and replace with our laoded df data
-           # The csv data is already loaded in the df variable and you can reference the values with a $ EG df$jobname brings in the jobname
-          ##Appointment Time Table
             box(width = NULL,
                uiOutput("UserAppointmentsTable")
             )
     ),
-    
-            
-    
-    #################################################
-    # Development Request from John Lister
-    # Date: 06/04/2019
-    # Description: This segment here is where I want the "Day Classification" Filter.
-    #               We are going to substitute their values for the values we symbolize from.
-    #               Reference values from df$day_class in getSize from server.R
-    #               I Want this to be a drop down filter, this filter will basically turn the map points on and off
-    #               You will probably need to do some work in the server.R file
+
     column(width = 3,
            box(width = NULL, status = "warning",
      ############# First attempt##################################################         
@@ -76,11 +50,13 @@ body <- dashboardBody(
                # BUT I say just get it working before we add that type of event
                actionButton("zoomButton", "Zoom to fit buses")
            )
+           
     )
   )
 )
 
-dashboardPage(
+#Set the UI Parameter to receive the Constructed Dashboard Components
+ui <- dashboardPage(
   header,
   dashboardSidebar(disable = TRUE),
   body
