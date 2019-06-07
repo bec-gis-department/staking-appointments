@@ -51,6 +51,7 @@ body <- dashboardBody(
                #Here is their action button that calls something from their server.R script, ideally I want ours to update on click
                # BUT I say just get it working before we add that type of event
                actionButton("applyFilters", "Apply Filters")
+               leafletOutput("map", height = 1000)
            )
            
     )
