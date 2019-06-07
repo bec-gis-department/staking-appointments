@@ -78,6 +78,8 @@ Your FIRST-PULL-EVER will be from the master branch!
 * **Members of the Bluebonnet Electric Organization, Pull and Push from/to branches assigned to 
 YOU ONLY!!** 
 
+* Keep your global.R and process.R files on hand, they won't be available in the master branch due to local development path issues
+
 * **Documentation Nation:**
    * If you don't add good descriptive comments and summaries to your Commits, I'm going to reject them
    * If you don't add in code documentation to your code, I'm going to delete it... talk to me, tell me what you were doing and WHY
@@ -134,7 +136,7 @@ YOU ONLY!!**
 
 * Project admins have locked down access to the master branch, any attempts to push and pull directly from there without authorization from the Administrators will be denied/removed.
 
-* Play nicely- rudeness, obscenities and general misocnduct will result in the **BAN-HAMMER** coming into effect.
+* Play nicely- rudeness, obscenities and general misconduct will result in the **BAN-HAMMER** coming into effect.
 
 Please make sure to update tests as appropriate, do not push any network specific information, these requests will be deleted if there is any information deemed sensitive. Contact GISJohnECS@gmail.com for more questions on what we deem as sensitive.
 
