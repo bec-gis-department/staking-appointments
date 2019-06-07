@@ -71,7 +71,6 @@ body <- dashboardBody(
                ),
             #We can probably use this action here to apply the filters
                actionButton("applyFilters", "Apply Filters")
-               leafletOutput("map", height = 1000)
            )
            
     )
