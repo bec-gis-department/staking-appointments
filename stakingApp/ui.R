@@ -11,10 +11,10 @@ body <- dashboardBody(
                #Key Note: John Lister 06/05/2019)
                   #Changed the map tag value to be "Map"
                   #This was the only way the Event Observation would work
-               leafletOutput("map", height = 1000)
+               leafletOutput("map", height = 700)
            ),
             box(width = NULL,
-               uiOutput("UserAppointmentsTable")
+                DT::dataTableOutput("apttable")
             )
     ),
 
@@ -25,30 +25,52 @@ body <- dashboardBody(
            uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
                #Added Today with a value of 0      
-                   selectInput("dayClassification", "Days until Appointment",
+                   selectInput("dayClassification", "Days until Appointment:",
                                    choices = c(
                                      "Today" = 0,
-                                     "Next Buisness Day" = 1,
-                                     "2 Buisness Days" = 2,
-                                     "3 Buisness Days" = 3,
-                                     "4 Buisness Days" = 4
+                                     "Next Business Day" = 1,
+                                     "2 Business Days" = 2,
+                                     "3 Business Days" = 3,
+                                     "4 Business Days" = 4,
+                                     "5 Business Days" = 5,
+                                     "More than 5..."  > 5
                                   ),
                                  #Makes Today the one selected
                                   selected = 0
      
      
                ),
+            #Filter by feeder, we'll load unique feeder values here
+           uiOutput("feederFilter"),
+             selectInput("feederFilter", "Select Feeder(s):",
+                         choices = c(
+                           "Load Feeder Info Here" = 0
+                         ),
+                         #Makes Today the one selected
+                         selected = 0
+                         
+                         
+             ),
+            #We'll load unique staker values here
+           uiOutput("stakerFilter"),
+             selectInput("stakerFilter", "Select Staker:",
+                         choices = c(
+                           "Load Staker Info Here" = 0
+                         ),
+                         #Makes Today the one selected
+                         selected = 0
+                       
+                       
+           ),
      ####################################################################################
      
                p(
                  class = "text-muted",
-                 #removed the below paragraph for now"
-                 paste("")
+                 paste("Here we will have filters allowing you to sort by staker, feeder and day classification")
                  
                ),
-               #Here is their action button that calls something from their server.R script, ideally I want ours to update on click
-               # BUT I say just get it working before we add that type of event
-               actionButton("zoomButton", "Zoom to fit buses")
+            #We can probably use this action here to apply the filters
+               actionButton("applyFilters", "Apply Filters")
            )
            
     )

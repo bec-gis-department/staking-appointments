@@ -9,22 +9,36 @@ server <- function(input, output, session) {
     # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/
     # By: Thomas Roh
     
-    isochrone <- eventReactive(input$map_click, {
-        ## Get the click info from the map
-        click <- input$map_click
-        clat <- click$lat
-        clng <- click$lng
+    isochrone <- eventReactive(c(input$map_click, input$map_shape_click), {
+        if(is.null(input$map_shape_click)){
+            ## Get the click info from the map
+            click <- input$map_click
+            clat <- click$lat
+            clng <- click$lng
+        }
+        else if(is.null(input$map_click)){
+            ## Get the click info from the map
+            click <- input$map_shape_click
+            clat <- click$lat
+            clng <- click$lng    
+        }
         #shinyalert(c(clng, clat))
         withProgress(message = 'Sending Request',
                      isochrone <- osrmIsochrone(loc = c(clng,clat),
                                                 breaks = sort(as.numeric(seq(10,35,5))),
-                                                res = 90) %>%
+                                                res = 40) %>%
                          st_as_sf()
         )
         isochrone
     })
+    #Define Data Frame with Staking Appointments
     data <- reactive({
         x <- df
+    })
+    
+    #Assign Pivot Table variable
+    output$apttable = DT::renderDataTable({
+        at
     })
     ##Generate Map display
     # I want to use our custom mapbox style
@@ -105,11 +119,20 @@ server <- function(input, output, session) {
     })
     
     #Wherever you click on the map will generate the drivetime Isochrones
-    observeEvent(input$map_click , {
-        ## Get the click info from the map
-        click <- input$map_click
-        clat <- click$lat
-        clng <- click$lng
+    observeEvent(c(input$map_click, input$map_shape_click) , {
+        #Validate which event is happening
+        if(is.null(input$map_shape_click)){
+            ## Get the click info from the map
+            click <- input$map_click
+            clat <- click$lat
+            clng <- click$lng
+        }
+        else if(is.null(input$map_click)){
+            ## Get the click info from the map
+            click <- input$map_shape_click
+            clat <- click$lat
+            clng <- click$lng    
+        }
         
         #Build the Isochrone Steps
         steps <- sort(as.numeric(seq(10,35,5)))

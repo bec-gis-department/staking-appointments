@@ -1,6 +1,8 @@
+library(DT)
 library(shiny)
 library(leaflet)
 library(dplyr)
+library(shinydashboard)
 library(shinythemes)
 library(shinyalert)
 library(osrm)
@@ -9,5 +11,8 @@ library(sp)
 library(sf)
 library(viridis)
 
+
 data_file <- file.path(getwd(), "staking_data.rds")
+pivottable <- file.path(getwd(), "apt_table.rds")
 df <- readRDS(data_file)
+at <- readRDS(pivottable)
