@@ -32,6 +32,7 @@ server <- function(input, output, session) {
         isochrone
     })
     #Define Data Frame with Staking Appointments
+    #Admin Note: Brandon, try filter this data before the map renders, that might help
     data <- reactive({
         x <- df
     })
@@ -55,9 +56,9 @@ server <- function(input, output, session) {
         # Admin Notes: right idea, but we should probably apply this to the data
         ########################################################
         #insert Filtered function
-        #filtered <- reactive({
-            #df[df$day_class %in% input$dayClassification]
-        #})
+        ##filtered <- reactive({
+            ##df[df$day_class %in% input$dayClassification]
+        ##})
         
         ########################################################
         # Name: getColor
