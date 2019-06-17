@@ -26,7 +26,7 @@ server <- function(input, output, session) {
         withProgress(message = 'Sending Request',
                      isochrone <- osrmIsochrone(loc = c(clng,clat),
                                                 breaks = sort(as.numeric(seq(10,35,5))),
-                                                res = 40) %>%
+                                                res = 90) %>%
                          st_as_sf()
         )
         isochrone
@@ -50,6 +50,15 @@ server <- function(input, output, session) {
     "
     output$map <- renderLeaflet({
         df <- data()
+        ########################################################
+        # Brandon Filter method
+        # Admin Notes: right idea, but we should probably apply this to the data
+        ########################################################
+        #insert Filtered function
+        #filtered <- reactive({
+            #df[df$day_class %in% input$dayClassification]
+        #})
+        
         ########################################################
         # Name: getColor
         # Description: Read loaded day_class value and produce a marker colour variable
