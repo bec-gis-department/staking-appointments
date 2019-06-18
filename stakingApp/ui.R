@@ -20,12 +20,11 @@ body <- dashboardBody(
 
     column(width = 3,
            box(width = NULL, status = "warning",
-     ############# First attempt##################################################         
-               #Changed uioutput to "dayClassification"
+        #Changed uioutput to "dayClass
            uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
                #Added Today with a value of 0      
-                   selectInput("dayClassification", "Days until Appointment:",
+                   selectInput(inputId = "dayClass", "Days until Appointment:",
                                    choices = c(
                                      "Today" = 0,
                                      "Next Business Day" = 1,
@@ -40,30 +39,28 @@ body <- dashboardBody(
      
      
                ),
-            #Filter by feeder, we'll load unique feeder values here
+           #Filter by feeder, we'll load unique feeder values here
            uiOutput("feederFilter"),
-             selectInput("feederFilter", "Select Feeder(s):",
-                         choices = c(
-                           "Load Feeder Info Here" = 0
-                         ),
-                         #Makes Today the one selected
-                         selected = 0
-                         
-                         
-             ),
-            #We'll load unique staker values here
-           uiOutput("stakerFilter"),
-             selectInput("stakerFilter", "Select Staker:",
-                         choices = c(
-                           "Load Staker Info Here" = 0
-                         ),
-                         #Makes Today the one selected
-                         selected = 0
+           selectInput("feederFilter", "Select Feeder(s):",
+                       choices = c(
+                         "Load Feeder Info Here" = 0
+                       ),
+                       #Makes Today the one selected
+                       selected = 0
                        
                        
            ),
+           #We'll load unique staker values here
+           uiOutput("stakerFilter"),
+           selectInput("stakerFilter", "Select Staker:",
+                       choices = c(
+                         "Load Staker Info Here" = 0
+                       ),
+                       #Makes Today the one selected
+                       selected = 0
+           ),
+
      ####################################################################################
-     
                p(
                  class = "text-muted",
                  paste("Here we will have filters allowing you to sort by staker, feeder and day classification")
