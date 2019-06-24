@@ -31,11 +31,9 @@ server <- function(input, output, session) {
         )
         isochrone
     })
+    
     #Define Data Frame with Staking Appointments
-    #Admin Note: Brandon, try filter this data before the map renders, that might help
-    data <- reactive({
-        x <- df
-    })
+    data <- df
     
     #Assign Pivot Table variable
     output$apttable = DT::renderDataTable({
@@ -50,15 +48,7 @@ server <- function(input, output, session) {
     accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
     "
     output$map <- renderLeaflet({
-        df <- data()
-        ########################################################
-        # Brandon Filter method
-        # Admin Notes: right idea, but we should probably apply this to the data
-        ########################################################
-        #insert Filtered function
-        ##filtered <- reactive({
-            ##df[df$day_class %in% input$dayClassification]
-        ##})
+        df <- data
         
         ########################################################
         # Name: getColor
@@ -127,7 +117,31 @@ server <- function(input, output, session) {
                               "<b>Staker:</b>", df$staker, "<br>",
                               "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
     })
+    ############################################################
+    # Here we are watching the Day classification filter
+    observe({
+        #Retrieve the value selected from the day class filter
+        dayclass <- input$dayClass
+        print(dayclass)
+        feederfilter <- input$feederFilter  
+        print(feederfilter)
+        stakerfilter<- input$stakerFilter  
+        print(stakerfilter)
+        #Now the filter will show values that equal all 3 of the filters
+        filtered_apts <- data %>% filter(data$business_days == dayclass & 
+                                           data$feeder == feederfilter &
+                                             data$staker == stakerfilter)
+        #print(filtered_apts)
+        # Setup a Lealfet Proxy to filter the Points
+        leafletProxy("map") %>% clearMarkers() %>% 
+            addCircleMarkers(lng = filtered_apts$Longitude,
+                             lat = filtered_apts$Latitude)
+        
+    })
+    #######Adding An All option#############################################
+  
     
+    ##################################################################
     #Wherever you click on the map will generate the drivetime Isochrones
     observeEvent(c(input$map_click, input$map_shape_click) , {
         #Validate which event is happening
