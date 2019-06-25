@@ -49,55 +49,7 @@ server <- function(input, output, session) {
     "
     output$map <- renderLeaflet({
         df <- data
-        ########################################################
-        # Name: getColor
-        # Description: Read loaded day_class value and produce a marker colour variable
-        # Created: 06/03/2019
-        # Author: John Lister - GIS Applications Developer
-        getColor <- function(day_class) {
-            sapply(df$day_class, function(type_) {
-                if(type_ == 'Today') {
-                    "blue"
-                } else if(type_ == 'Next Business Day') {
-                    "teal"
-                } else if(type_ == '2 Business Days') {
-                    "green"  
-                } else if(type_ == '3 Business Days') {
-                    "yellow"  
-                } else if(type_ == '4 Business Days') {
-                    "orange"  
-                } else if(type_ == '5 Business Days') {
-                    "red"  
-                } else if(type_ == 'More than 5 business days') {
-                    "grey"  
-                }else {
-                    "purple"
-                } })
-        }
-        ########################################################
-        # Name: getSize
-        # Description: Read day_class dataframe value and produce a marker size variable
-        # Created: 06/03/2019
-        # Author: John Lister - GIS Applications Developer
-        getSize <- function(day_class) {
-            sapply(df$day_class, function(type_) {
-                if(type_ == 'Today') {
-                    14
-                } else if(type_ == 'Next Business Day') {
-                    11
-                } else if(type_ == '2 Business Days') {
-                    9  
-                } else if(type_ == '3 Business Days') {
-                    7  
-                } else if(type_ == '4 Business Days') {
-                    6 
-                } else if(type_ == '5 Business Days') {
-                    4  
-                } else if(type_ == 'More than 5 business days') {
-                    2  
-                }else {
-                    2
-                } })
+
         } 
         leaflet(data = df) %>%    
             setView(-97.285944, 30.104740, 10) %>%   
@@ -184,14 +136,7 @@ server <- function(input, output, session) {
                                            "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))   
     }) 
                             
-                            
-                             
-      
 
-    ####### Adding An All option #####################################
-     
-     
-    ##################################################################
     #Wherever you click on the map will generate the drivetime Isochrones
     observeEvent(c(input$map_click, input$map_shape_click) , {
         #Validate which event is happening

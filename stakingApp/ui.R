@@ -20,6 +20,7 @@ body <- dashboardBody(
     ######################Start of Filters################################    
     column(width = 3,
            box(width = NULL, status = "warning",
+
                #Changed uioutput to "dayClass
                uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
@@ -52,6 +53,7 @@ body <- dashboardBody(
                            choices = sort(unique(df$staker))
                ),
                ####################################################################################
+
                p(
                  class = "text-muted",
                  paste("Here we have filters allowing you to sort by staker, feeder and day classification")
