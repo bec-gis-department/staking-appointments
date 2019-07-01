@@ -17,7 +17,7 @@ body <- dashboardBody(
                DT::dataTableOutput("apttable")
            )
     ),
-    ######################Start of Filters################################    
+    ######################Start of Filters#################################    
     column(width = 3,
            box(width = NULL, status = "warning",
 
@@ -25,19 +25,20 @@ body <- dashboardBody(
                uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
                #Added Today with a value of 0 
-               
-               selectInput(inputId = "dayClass", "Days until Appointment:",
-                           choices = c( 
-                             "Today" = 0,
-                             "Next Business Day" = 1,
-                             "2 Business Days" = 2,
-                             "3 Business Days" = 3,
-                             "4 Business Days" = 4,
-                             "5 Business Days" = 5,
-                             "More than 5..."  > 5
-                         
-                           ),
-               ),
+               #chnaged the selectInput to a pickerInput
+               pickerInput(
+                 inputId = "dayClass",
+                 label = "Days until Appointment",
+                 choices = c("Today" = 0, "Next Buisness Day" = 1, "2 Buinsess Days" = 2,
+                             "3 Buisness Days" = 3, "4 Buisness Days" = 4, "5 Buisness Days" = 5),
+                 selected = 0,
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE
+               ),     
                #Filter by feeder, we'll load unique feeder values here
                #sorted the feeder values randomly
                uiOutput("feederFilter"),
