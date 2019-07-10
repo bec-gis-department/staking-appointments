@@ -52,16 +52,7 @@ body <- dashboardBody(
                uiOutput("stakerFilter"),
                selectInput("stakerFilter", "Select Staker:",
                            choices = sort(unique(df$staker))
-               ),
-               ####################################################################################
-
-               p(
-                 class = "text-muted",
-                 paste("Here we have filters allowing you to sort by staker, feeder and day classification")
-                 
-               ),
-               #We can probably use this action here to apply the filters
-               actionButton("applyFilters", "Apply Filters")
+               )
            )
            
     )

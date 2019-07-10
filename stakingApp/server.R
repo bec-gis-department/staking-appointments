@@ -26,7 +26,7 @@ server <- function(input, output, session) {
     withProgress(message = 'Sending Request',
                  isochrone <- osrmIsochrone(loc = c(clng,clat),
                                             breaks = sort(as.numeric(seq(10,35,5))),
-                                            res = 90) %>%
+                                            res = 50) %>%
                    st_as_sf()
     )
     isochrone
@@ -65,7 +65,7 @@ server <- function(input, output, session) {
     # Created: 06/03/2019
     # Author: John Lister - GIS Applications Developer
     getColor <- function(day_class) {
-      sapply(df$day_class, function(type_) {
+      sapply(day_class, function(type_) {
         if(type_ == 'Today') {
           "blue"
         } else if(type_ == 'Next Business Day') {
@@ -90,7 +90,7 @@ server <- function(input, output, session) {
     # Created: 06/03/2019
     # Author: John Lister - GIS Applications Developer
     getSize <- function(day_class) {
-      sapply(df$day_class, function(type_) {
+      sapply(day_class, function(type_) {
         if(type_ == 'Today') {
           14
         } else if(type_ == 'Next Business Day') {
@@ -128,8 +128,10 @@ server <- function(input, output, session) {
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$Longitude,
                        lat = filtered_apts$Latitude,
-                       color  = getColor(data),
-                       radius = getSize(data), stroke = FALSE, fillOpacity = 0.5,
+                       color  = getColor(filtered_apts$day_class),
+                       radius = getSize(filtered_apts$day_class), 
+                       stroke = FALSE, 
+                       fillOpacity = 0.5,
                        #added in pathOptions
                        options = pathOptions(pane = "markers"),
                        popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
