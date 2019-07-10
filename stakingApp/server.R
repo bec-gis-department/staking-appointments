@@ -52,7 +52,10 @@ server <- function(input, output, session) {
     
     
     leaflet(data = df) %>%    
-      setView(-97.285944, 30.104740, 10) %>%   
+      setView(-97.285944, 30.104740, 10) %>%
+      #added two map panes for each layer
+      addMapPane("iso", zIndex = 420) %>% 
+      addMapPane("markers", zIndex = 430) %>% 
       addProviderTiles(providers$OpenStreetMap.BlackAndWhite) 
     
   })       
@@ -115,18 +118,23 @@ server <- function(input, output, session) {
     print(dayclass)
     # feederfilter <- input$feederFilter  
     # print(feederfilter)
-    #  stakerfilter<- input$stakerFilter  
-    #  print(stakerfilter)
-    #Now the filter will show values that equal all 3 of the filters
+    stakerfilter<- input$stakerFilter  
+    print(stakerfilter)
+    # Now the filter will show values that equal all 3 of the filters
+    # adding in vectors for dayclass Legend
+    
     #Changed the == in the fiter to %in% 
-    filtered_apts <- data %>% filter(data$business_days %in% dayclass)   
+    filtered_apts <- data %>% filter(data$business_days %in% dayclass &
+                                       data$staker %in% stakerfilter)   
     #print(filtered_apts)
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$Longitude,
                        lat = filtered_apts$Latitude,
                        color  = getColor(data),
-                       radius = getSize(data), stroke = FALSE, fillOpacity = 0.5,   
+                       radius = getSize(data), stroke = FALSE, fillOpacity = 0.5,
+                       #added in pathOptions
+                       options = pathOptions(pane = "markers"),
                        popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
                                      "<b>Job Name:</b>", df$jobname, "<br>",   
                                      "<b>Pole Number:</b>",df$polenumber, "<br>",    
@@ -135,6 +143,8 @@ server <- function(input, output, session) {
                                      "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
                                      "<b>Staker:</b>", df$staker, "<br>",   
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
+    # Legend for Day Classification
+    
   }) 
   ##########################################################################################
   #Wherever you click on the map will generate the drivetime Isochrones
@@ -164,6 +174,8 @@ server <- function(input, output, session) {
       #clearMarkers() %>%
       clearControls() %>%
       addPolygons(data = isochrone,
+                  #added in pathOptions
+                  options = pathOptions(pane = "iso"),
                   weight = .5, 
                   color = ~pal(steps)) %>%
       addLegend(data = isochrone,
@@ -175,3 +187,4 @@ server <- function(input, output, session) {
       setView(clng, clat, zoom = 9)
   })
 }
+
