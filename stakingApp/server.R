@@ -41,12 +41,9 @@ server <- function(input, output, session) {
   })
   ##Generate Map display
   # I want to use our custom mapbox style
-  #Found this example at https://rstudio.github.io/leaflet/choropleths.html:
-  "
-    addProviderTiles('MapBox', options = providerTileOptions(
-    id = 'mapbox.light',
-    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
-    "
+  bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
+  
+  map_attr <- 'John Lister - GIS Applications Developer'
   output$map <- renderLeaflet({
     df <- data
     
@@ -56,7 +53,7 @@ server <- function(input, output, session) {
       #added two map panes for each layer
       addMapPane("iso", zIndex = 420) %>% 
       addMapPane("markers", zIndex = 430) %>% 
-      addProviderTiles(providers$OpenStreetMap.BlackAndWhite) 
+      addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
   })       
   ########################################################################
