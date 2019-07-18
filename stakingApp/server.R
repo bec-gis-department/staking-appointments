@@ -36,29 +36,31 @@ server <- function(input, output, session) {
   data <- df   
   
   #Assign Pivot Table variable
+  #Changed to a datatable function so the table could be sorted by appointment time
+  #Assign Pivot Table variable
   output$apttable = DT::renderDataTable({    
-    at     
-  })
+    at
+    #ordering the colums logically
+    setcolorder(at,c("staker","8:30:00 AM","10:30:00 AM","1:30:00 PM","3:30:00 PM"))
+  })  
+  
   ##Generate Map display
   # I want to use our custom mapbox style
-  #Found this example at https://rstudio.github.io/leaflet/choropleths.html:
-  "
-    addProviderTiles('MapBox', options = providerTileOptions(
-    id = 'mapbox.light',
-    accessToken = Sys.getenv('MAPBOX_ACCESS_TOKEN')))
-    "
+  bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
+  
+  map_attr <- 'John Lister - GIS Applications Developer'
   output$map <- renderLeaflet({
     df <- data
     
     
     leaflet(data = df) %>%    
-      setView(-97.285944, 30.104740, 10) %>%
+      setView(-97.285944, 30.104740, 9) %>%
       #added two map panes for each layer
       addMapPane("iso", zIndex = 420) %>% 
       addMapPane("markers", zIndex = 430) %>% 
-      addProviderTiles(providers$OpenStreetMap.BlackAndWhite) 
-    
-  })       
+      addTiles(urlTemplate = bec_map, attribution = map_attr) 
+                        
+  })
   ########################################################################
   # Here we are watching the Day classification, Feeder, and Staker filter
   observe({
@@ -68,7 +70,7 @@ server <- function(input, output, session) {
     # Created: 06/03/2019
     # Author: John Lister - GIS Applications Developer
     getColor <- function(day_class) {
-      sapply(df$day_class, function(type_) {
+      sapply(day_class, function(type_) {
         if(type_ == 'Today') {
           "blue"
         } else if(type_ == 'Next Business Day') {
@@ -93,7 +95,7 @@ server <- function(input, output, session) {
     # Created: 06/03/2019
     # Author: John Lister - GIS Applications Developer
     getSize <- function(day_class) {
-      sapply(df$day_class, function(type_) {
+      sapply(day_class, function(type_) {
         if(type_ == 'Today') {
           14
         } else if(type_ == 'Next Business Day') {
@@ -116,23 +118,22 @@ server <- function(input, output, session) {
     #Retrieve the value selected from the day class, feeder, and staker filter
     dayclass <- input$dayClass
     print(dayclass)
-    # feederfilter <- input$feederFilter  
-    # print(feederfilter)
+    feederfilter <- input$feederFilter  
+    print(feederfilter)
     stakerfilter<- input$stakerFilter  
     print(stakerfilter)
-    # Now the filter will show values that equal all 3 of the filters
-    # adding in vectors for dayclass Legend
-    
     #Changed the == in the fiter to %in% 
     filtered_apts <- data %>% filter(data$business_days %in% dayclass &
-                                       data$staker %in% stakerfilter)   
-    #print(filtered_apts)
+                                       data$staker %in% stakerfilter &
+                                       data$feeder %in% feederfilter)   
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$Longitude,
                        lat = filtered_apts$Latitude,
-                       color  = getColor(data),
-                       radius = getSize(data), stroke = FALSE, fillOpacity = 0.5,
+                       color  = getColor(filtered_apts$day_class),
+                       radius = getSize(filtered_apts$day_class), 
+                       stroke = FALSE, 
+                       fillOpacity = 0.5,
                        #added in pathOptions
                        options = pathOptions(pane = "markers"),
                        popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
@@ -145,7 +146,7 @@ server <- function(input, output, session) {
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
     # Legend for Day Classification
     
-  }) 
+  })
   ##########################################################################################
   #Wherever you click on the map will generate the drivetime Isochrones
   observeEvent(c(input$map_click, input$map_shape_click) , {
@@ -187,4 +188,3 @@ server <- function(input, output, session) {
       setView(clng, clat, zoom = 9)
   })
 }
-
