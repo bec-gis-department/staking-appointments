@@ -26,7 +26,7 @@ server <- function(input, output, session) {
     withProgress(message = 'Sending Request',
                  isochrone <- osrmIsochrone(loc = c(clng,clat),
                                             breaks = sort(as.numeric(seq(10,35,5))),
-                                            res = 90) %>%
+                                            res = 50) %>%
                    st_as_sf()
     )
     isochrone
@@ -59,8 +59,8 @@ server <- function(input, output, session) {
       addMapPane("iso", zIndex = 420) %>% 
       addMapPane("markers", zIndex = 430) %>% 
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
-                        
-  })
+    
+  })       
   ########################################################################
   # Here we are watching the Day classification, Feeder, and Staker filter
   observe({
