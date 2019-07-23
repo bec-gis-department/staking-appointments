@@ -63,6 +63,7 @@ body <- dashboardBody(
                #We'll load unique staker values here
                #sorted the staker values randomly
                uiOutput("stakerFilter"),
+               
                pickerInput(
                  inputId = "stakerFilter",
                  label = "Select Staker(s)",
