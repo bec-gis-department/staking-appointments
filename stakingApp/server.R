@@ -35,15 +35,8 @@ server <- function(input, output, session) {
   #Define Data Frame with Staking Appointments
   data <- df   
   
-  #Assign Pivot Table variable
-  #Changed to a datatable function so the table could be sorted by appointment time
-  #Assign Pivot Table variable
-  output$apttable = DT::renderDataTable({    
-    at
-    #ordering the colums logically
-    setcolorder(at,c("staker","8:30:00 AM","10:30:00 AM","1:30:00 PM","3:30:00 PM"))
-  })  
-  
+ 
+ 
   ##Generate Map display
   # I want to use our custom mapbox style
   bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
@@ -146,6 +139,36 @@ server <- function(input, output, session) {
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
     # Legend for Day Classification
     
+  })
+  #Here is where the data table is started
+  output$apttable = DT::renderDataTable({
+    datatable(at, rownames = TRUE, selection = list(mode= "single",target="cell"))
+  })
+  setcolorder(at,c("staker","8:30:00 AM","10:30:00 AM","1:30:00 PM","3:30:00 PM"))
+  observe({  
+    #Appointment table click event 
+    selected_apt <- input$apttable_cell_clicked 
+    print(selected_apt$value)
+    #filter map based on cell selected
+    
+    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)   
+    leafletProxy("map") %>% clearMarkers() %>% 
+      addCircleMarkers(lng = filteredselected_apts$Longitude,
+                       lat = filteredselected_apts$Latitude,
+                       color  = "black",
+                       radius = 14, 
+                       stroke = FALSE, 
+                       fillOpacity = 0.5,
+                       popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
+                                     "<b>Job Name:</b>", df$jobname, "<br>",   
+                                     "<b>Pole Number:</b>",df$polenumber, "<br>",    
+                                     "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",   
+                                     "<b>Meeting Location:</b>", df$meetinglocation, "<br>",   
+                                     "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
+                                     "<b>Staker:</b>", df$staker, "<br>",   
+                                     "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
+    
+  
   })
   ##########################################################################################
   #Wherever you click on the map will generate the drivetime Isochrones
