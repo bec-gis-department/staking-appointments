@@ -1,6 +1,9 @@
 # UI File contains Look & Layout for the application
+title <- tags$img(src = 'whitelogo.png',
+                            height = '50', width = '50', alt = "Staking Appointments")
 header <- dashboardHeader(
-  title = "Staking Appointments"
+  
+  title = title, titleWidth = 500
 )
 
 body <- dashboardBody(
