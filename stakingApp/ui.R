@@ -1,11 +1,11 @@
 # UI File contains Look & Layout for the application
-title <- tags$img(src = 'whitelogo.png',
-                            height = '50', width = '50', alt = "Staking Appointments")
+title <- tags$img(src="whitelogo.png",
+                  height = '50',width = '50', ' ',
+                  'Staking Appointments')
+
 header <- dashboardHeader(
   
-  title = title, titleWidth = 500
-)
-
+  title = title, titleWidth = 300)
 body <- dashboardBody(
   fluidRow(
     column(width = 9,
@@ -80,16 +80,21 @@ body <- dashboardBody(
                
                p(
                  class = "text-muted",
-                 paste("Here we have filters allowing you to sort by staker, feeder and day classification")
+                 paste("Here we have filters allowing you to sort by Staker, Feeder and Day Classification"),
+                       
+                 p(
+                   class = "text-muted",
+                   paste("Click here to clear the Isochrone Drive Times from the map")
                  
                ),
-               #We can probably use this action here to apply the filters
-               actionButton("applyFilters", "Apply Filters")
+               #changed actionbutton to clear isochrones instead of apply filters
+               #This button will be used to clear the Isochrone polygons from the map
+               actionButton("cleariso", "Clear Isochrones", styleclass = "success")
            )
     )
   )
 )
-
+)
 #Set the UI Parameter to receive the Constructed Dashboard Components
 ui <- dashboardPage(
   header,

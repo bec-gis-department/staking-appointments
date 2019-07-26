@@ -1,32 +1,32 @@
-#Set the Server Variable 
-server <- function(input, output, session) {
+  # Set the Server Variable 
+  server <- function(input, output, session) {
   ##############################################
-  # Name: isochrone    
-  # Description:  
-  # Construct Isochrone variable from map click to send to the OSRM Server   
-  # Created: 06/03/2019    
-  # Author: John Lister - GIS Applications Developer    
-  # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/    
-  # By: Thomas Roh      
+  # Name: isochrone                                                                    
+  # Description:                               
+  # Construct Isochrone variable from map click to send to the OSRM Server                  
+  # Created: 06/03/2019                                                                           
+  # Author: John Lister - GIS Applications Developer                                                                         
+  # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/                                                 
+  # By: Thomas Roh                                                                                      
   
-  isochrone <- eventReactive(c(input$map_click, input$map_shape_click), {
-    if(is.null(input$map_shape_click)){
-      ## Get the click info from the map   
-      click <- input$map_click
-      clat <- click$lat
-      clng <- click$lng
+  isochrone <- eventReactive(c(input$map_click, input$map_shape_click), {                       
+    if(is.null(input$map_shape_click)){                              
+      ## Get the click info from the map                         
+      click <- input$map_click                                  
+      clat <- click$lat                                 
+      clng <- click$lng                                 
     }
-    else if(is.null(input$map_click)){
-      ## Get the click info from the map   
-      click <- input$map_shape_click
-      clat <- click$lat
-      clng <- click$lng    
+    else if(is.null(input$map_click)){                      
+      ## Get the click info from the map         
+      click <- input$map_shape_click                                
+      clat <- click$lat                                       
+      clng <- click$lng                                          
     }
-    #shinyalert(c(clng, clat))
-    withProgress(message = 'Sending Request',
-                 isochrone <- osrmIsochrone(loc = c(clng,clat),
-                                            breaks = sort(as.numeric(seq(10,35,5))),
-                                            res = 50) %>%
+    #shinyalert(c(clng, clat))                            
+    withProgress(message = 'Sending Request',                            
+                 isochrone <- osrmIsochrone(loc = c(clng,clat),                          
+                                            breaks = sort(as.numeric(seq(10,35,5))),                       
+                                            res = 50) %>%                       
                    st_as_sf()
     )
     isochrone
@@ -35,8 +35,6 @@ server <- function(input, output, session) {
   #Define Data Frame with Staking Appointments
   data <- df   
   
- 
- 
   ##Generate Map display
   # I want to use our custom mapbox style
   bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
@@ -45,12 +43,13 @@ server <- function(input, output, session) {
   output$map <- renderLeaflet({
     df <- data
     
-    
     leaflet(data = df) %>%    
       setView(-97.285944, 30.104740, 9) %>%
       #added two map panes for each layer
       addMapPane("iso", zIndex = 420) %>% 
       addMapPane("markers", zIndex = 430) %>% 
+      #added another map pane for the appointment table click event 
+      addMapPane("tblapts", zIndex = 440) %>%
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
   })       
@@ -116,9 +115,9 @@ server <- function(input, output, session) {
     stakerfilter<- input$stakerFilter  
     print(stakerfilter)
     #Changed the == in the fiter to %in% 
-    filtered_apts <- data %>% filter(data$business_days %in% dayclass &
-                                       data$staker %in% stakerfilter &
-                                       data$feeder %in% feederfilter)   
+    filtered_apts <- data %>% filter(data$business_days %in% dayclass &    
+                                       data$staker %in% stakerfilter &    
+                                       data$feeder %in% feederfilter)     
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$Longitude,
@@ -137,7 +136,7 @@ server <- function(input, output, session) {
                                      "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
                                      "<b>Staker:</b>", df$staker, "<br>",   
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
-    # Legend for Day Classification
+  # Legend for Day Classification
     
   })
   #Here is where the data table is started
@@ -145,20 +144,23 @@ server <- function(input, output, session) {
     datatable(at, rownames = TRUE, selection = list(mode= "single",target="cell"))
   })
   setcolorder(at,c("staker","8:30:00 AM","10:30:00 AM","1:30:00 PM","3:30:00 PM"))
-  observe({  
+   observe({
     #Appointment table click event 
     selected_apt <- input$apttable_cell_clicked 
     print(selected_apt$value)
+  
     #filter map based on cell selected
     
     filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)   
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filteredselected_apts$Longitude,
                        lat = filteredselected_apts$Latitude,
-                       color  = "black",
+                       color  = "blue",
                        radius = 14, 
                        stroke = FALSE, 
-                       fillOpacity = 0.5,
+                       fillOpacity = 0.7,
+                       #added in pathOptions
+                       options = pathOptions(pane = "tblapts"),
                        popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
                                      "<b>Job Name:</b>", df$jobname, "<br>",   
                                      "<b>Pole Number:</b>",df$polenumber, "<br>",    
@@ -167,9 +169,7 @@ server <- function(input, output, session) {
                                      "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
                                      "<b>Staker:</b>", df$staker, "<br>",   
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
-    
-  
-  })
+   })
   ##########################################################################################
   #Wherever you click on the map will generate the drivetime Isochrones
   observeEvent(c(input$map_click, input$map_shape_click) , {
@@ -210,4 +210,12 @@ server <- function(input, output, session) {
       #addMarkers(lng = clng, clat) %>%
       setView(clng, clat, zoom = 9)
   })
+   observe({
+     if(input$cleariso==0)
+       return()
+     else
+       leafletProxy("map") %>%
+       clearShapes() %>%
+       clearControls()
+   })
 }
