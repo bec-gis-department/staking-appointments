@@ -15,6 +15,7 @@ head(df)
 df$Latitude <- as.numeric(df$latitude)
 df$Longitude <- as.numeric(df$longitude)
 
+#-----------Here we format the Data Table-------------------
 todays_Apps <- filter(df, df$day_class == "Today")
 
 head(todays_Apps)
@@ -26,6 +27,7 @@ x <- todays_Apps %>%
 
 x %>%
   spread(appointmenttime, jobnumber)
+#----------------------------------------------------------
 
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")

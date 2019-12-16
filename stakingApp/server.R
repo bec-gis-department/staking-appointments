@@ -147,23 +147,22 @@
  
     
   })
+  #-----------------------------------------------------------------------------
   #Here is where the data table is started
-  #**** Data Table is currently bringing in the main df format***
-  
   output$apttable = DT::renderDataTable({
     datatable(at, rownames = TRUE, selection = list(mode= "single",target="cell"))
   })
+  
+  # Here is where we are filtering the map by the click event
   observe({
-    #Appointment table click event 
     selected_apt <- input$apttable_cell_clicked 
-    
-    #**Preview 
+    # Just for the Memes we are printing the Job Number of the Cell we are Selecting
     print(selected_apt$value)
   
-    #filter map based on cell selected
-    
+    # This should be filtering the map, but it isn't...
     filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
-
+  
+    #Here is our leaflet Proxy that sets the map visual (May be a good idea to functionalize this somehow because we re-use it per map filter -\_(",)_/-)
     leafletProxy("map") %>% clearMarkers() %>% 
     addCircleMarkers(lng = filteredselected_apts$Longitude,
                        lat = filteredselected_apts$Latitude,
@@ -225,6 +224,8 @@
       #addMarkers(lng = clng, clat) %>%
       setView(clng, clat, zoom = 9)
   })
+  #------------------------------------------------------
+  # Isochrone Clear Event
    observe({
      if(input$cleariso==0)
        return()
@@ -233,4 +234,5 @@
        clearShapes() %>%
        clearControls()
    })
+  #------------------------------------------------------
 }
