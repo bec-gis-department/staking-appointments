@@ -8,26 +8,26 @@ library(knitr)
 #You'll have to update this path to wherever the Sample Data lives in your environment
 df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Sample/staking_data.csv", header=TRUE, sep=",")
 head(df)
+
+#-----------------------------------------------------------------
 #Ensure the lat & lon are Numeric Values
-df$Latitude <- as.numeric(df$Latitude)
-df$Longitude <- as.numeric(df$Longitude)
-#Call other Attribute Information for the Popups
+#Toss the NULLS
+df$Latitude <- as.numeric(df$latitude)
+df$Longitude <- as.numeric(df$longitude)
 
-#Construct The Appointment Table for Stakers
+#-----------Here we format the Data Table-------------------
+todays_Apps <- filter(df, df$day_class == "Today")
 
-# 1: filter to keep three states.  
-basic_summ = filter(df, business_days == 0)
+head(todays_Apps)
 
-# 2: set up data frame for by-group processing.  
-basic_summ = group_by(basic_summ, staker, appointmenttime)
+x <- todays_Apps %>%
+  select(jobnumber, staker, appointmenttime)
+  group_by(staker, appointmenttime)
+  summarise(appointmenttime = first(appointmenttime))
 
-# 3: calculate summary metrics
-basic_summ = summarise(basic_summ, 
-                       jobnumber = first(jobnumber))
-
-basic_summ <- cast(basic_summ, staker~appointmenttime, first, value = 'jobnumber')
-
-
+x %>%
+  spread(appointmenttime, jobnumber)
+#----------------------------------------------------------
 
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")

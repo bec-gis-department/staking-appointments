@@ -1,82 +1,101 @@
 # UI File contains Look & Layout for the application
-header <- dashboardHeader(
-              title = "Staking Appointments"
-          )
+title <- tags$img(src="whitelogo.png",
+                  height = '50',width = '50', ' ',
+                  'Staking Appointments')
 
+header <- dashboardHeader(
+  
+  title = title, titleWidth = 300)
 body <- dashboardBody(
   fluidRow(
     column(width = 9,
            box(width = NULL, solidHeader = TRUE,
                #Embeding our map into the map tag
                #Key Note: John Lister 06/05/2019)
-                  #Changed the map tag value to be "Map"
-                  #This was the only way the Event Observation would work
+               #Changed the map tag value to be "map"
+               #This was the only way the Event Observation would work
                leafletOutput("map", height = 700)
            ),
-            box(width = NULL,
-                DT::dataTableOutput("apttable")
-            )
+           box(width = NULL,
+               DT::dataTableOutput("apttable")
+              
+           )
     ),
-
+    ###################### Start of Filters #################################    
     column(width = 3,
            box(width = NULL, status = "warning",
-     ############# First attempt##################################################         
-               #Changed uioutput to "dayClassification"
-           uiOutput("dayClassification"),
+               
+               #Changed uioutput to "dayClass
+               uiOutput("dayClassification"),
                #Changed from multiple choice checkbox to multiple choice dropdown
-               #Added Today with a value of 0      
-                   selectInput("dayClassification", "Days until Appointment:",
-                                   choices = c(
-                                     "Today" = 0,
-                                     "Next Business Day" = 1,
-                                     "2 Business Days" = 2,
-                                     "3 Business Days" = 3,
-                                     "4 Business Days" = 4,
-                                     "5 Business Days" = 5,
-                                     "More than 5..."  > 5
-                                  ),
-                                 #Makes Today the one selected
-                                  selected = 0
-     
-     
+               #Added Today with a value of 0 
+               #chnaged the selectInput to a pickerInput
+               pickerInput(
+                 inputId = "dayClass",
+                 label = "Days until Appointment",
+                 choices = c("Today" = 0, "Next Business Day" = 1, "2 Business Days" = 2,
+                             "3 Business Days" = 3, "4 Business Days" = 4, "5 Business Days" = 5, "More than 5 business days out.."=9999),
+                 selected = c(0),
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE
                ),
-            #Filter by feeder, we'll load unique feeder values here
-           uiOutput("feederFilter"),
-             selectInput("feederFilter", "Select Feeder(s):",
-                         choices = c(
-                           "Load Feeder Info Here" = 0
-                         ),
-                         #Makes Today the one selected
-                         selected = 0
-                         
-                         
-             ),
-            #We'll load unique staker values here
-           uiOutput("stakerFilter"),
-             selectInput("stakerFilter", "Select Staker:",
-                         choices = c(
-                           "Load Staker Info Here" = 0
-                         ),
-                         #Makes Today the one selected
-                         selected = 0
-                       
-                       
-           ),
-     ####################################################################################
-     
-               p(
-                 class = "text-muted",
-                 paste("Here we will have filters allowing you to sort by staker, feeder and day classification")
+               
+               #Filter by feeder, we'll load unique feeder values here
+               #sorted the feeder values randomly
+               uiOutput("feederFilter"),
+               pickerInput(
+                 inputId = "feederFilter",
+                 label = "Select Feeder(s):",
+                 choices = sort(as.character(unique(df$feeder))),
+                 selected = df$feeder,
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE 
                  
                ),
-            #We can probably use this action here to apply the filters
-               actionButton("applyFilters", "Apply Filters")
+               
+               #We'll load unique staker values here
+               #sorted the staker values randomly
+               uiOutput("stakerFilter"),
+               
+               pickerInput(
+                 inputId = "stakerFilter",
+                 label = "Select Staker(s)",
+                 choices = sort(as.character(unique(df$staker))),
+                 selected = df$staker,
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE
+               ),
+               ####################################################################################
+               
+               p(
+                 class = "text-muted",
+                 paste("Here we have filters allowing you to sort by Staker, Feeder and Day Classification"),
+                       
+                 p(
+                   class = "text-muted",
+                   paste("Click here to clear the Isochrone Drive Times from the map")
+                 
+               ),
+               #changed actionbutton to clear isochrones instead of apply filters
+               #This button will be used to clear the Isochrone polygons from the map
+               actionButton("cleariso", "Clear Isochrones", styleclass = "success")
            )
-           
     )
   )
 )
-
+)
 #Set the UI Parameter to receive the Constructed Dashboard Components
 ui <- dashboardPage(
   header,
