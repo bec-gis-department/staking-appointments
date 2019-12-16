@@ -5,11 +5,13 @@ library(dplyr)
 library(shinydashboard)
 library(shinythemes)
 library(shinyalert)
+library(shinyWidgets)
 library(osrm)
 library(rgdal)
 library(sp)
 library(sf)
 library(viridis)
+library(data.table)
 
 
 data_file <- file.path(getwd(), "staking_data.rds")

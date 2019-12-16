@@ -26,7 +26,7 @@
     withProgress(message = 'Sending Request',                            
                  isochrone <- osrmIsochrone(loc = c(clng,clat),                          
                                             breaks = sort(as.numeric(seq(10,35,5))),                       
-                                            res = 50) %>%                       
+                                            res = 20) %>%                       
                    st_as_sf()
     )
     isochrone
@@ -39,7 +39,7 @@
   # I want to use our custom mapbox style
   bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
   
-  map_attr <- 'John Lister - GIS Applications Developer'
+  map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
   output$map <- renderLeaflet({
     df <- data
     
@@ -109,22 +109,30 @@
     
     #Retrieve the value selected from the day class, feeder, and staker filter
     dayclass <- input$dayClass
-    print(dayclass)
+    ##print(dayclass)
     feederfilter <- input$feederFilter  
-    print(feederfilter)
+    ##print(feederfilter)
     stakerfilter<- input$stakerFilter  
-    print(stakerfilter)
+    ##print(stakerfilter)
     #Changed the == in the fiter to %in% 
-    filtered_apts <- data %>% filter(data$business_days %in% dayclass &    
-                                       data$staker %in% stakerfilter &    
-                                       data$feeder %in% feederfilter)     
+    filtered_apts <- data %>% filter(
+        data$business_days %in% dayclass &    
+        data$staker %in% stakerfilter &    
+        data$feeder %in% feederfilter
+                                     )
+    #** Output Shit **
+    print(filtered_apts$jobnumber) #, filtered_apts$Longitude, filtered_apts$Latitude)
+    print(filtered_apts$Longitude)
+    
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$Longitude,
                        lat = filtered_apts$Latitude,
-                       color  = getColor(filtered_apts$day_class),
+                       fillColor  = getColor(filtered_apts$day_class),
+                       color = "black",
                        radius = getSize(filtered_apts$day_class), 
-                       stroke = FALSE, 
+                       stroke = TRUE,
+                       weight = 2,
                        fillOpacity = 0.5,
                        #added in pathOptions
                        options = pathOptions(pane = "markers"),
@@ -136,28 +144,34 @@
                                      "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
                                      "<b>Staker:</b>", df$staker, "<br>",   
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
-  # Legend for Day Classification
+ 
     
   })
   #Here is where the data table is started
+  #**** Data Table is currently bringing in the main df format***
+  
   output$apttable = DT::renderDataTable({
     datatable(at, rownames = TRUE, selection = list(mode= "single",target="cell"))
   })
-  setcolorder(at,c("staker","8:30:00 AM","10:30:00 AM","1:30:00 PM","3:30:00 PM"))
-   observe({
+  observe({
     #Appointment table click event 
     selected_apt <- input$apttable_cell_clicked 
+    
+    #**Preview 
     print(selected_apt$value)
   
     #filter map based on cell selected
     
-    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)   
+    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
+
     leafletProxy("map") %>% clearMarkers() %>% 
-      addCircleMarkers(lng = filteredselected_apts$Longitude,
+    addCircleMarkers(lng = filteredselected_apts$Longitude,
                        lat = filteredselected_apts$Latitude,
-                       color  = "blue",
+                       fillColor =  "blue",
+                       color = "black",
                        radius = 14, 
-                       stroke = FALSE, 
+                       stroke = TRUE,
+                       weight = 2,
                        fillOpacity = 0.7,
                        #added in pathOptions
                        options = pathOptions(pane = "tblapts"),
@@ -170,6 +184,7 @@
                                      "<b>Staker:</b>", df$staker, "<br>",   
                                      "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
    })
+   
   ##########################################################################################
   #Wherever you click on the map will generate the drivetime Isochrones
   observeEvent(c(input$map_click, input$map_shape_click) , {
