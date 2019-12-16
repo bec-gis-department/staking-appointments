@@ -1,4 +1,4 @@
-jobnumber,jobname,polenumber,houseno,address,city,zip,homephone,appointmentdate,appointmenttime,meetinglocation,staker,feeder,Longitude,Latitude,time_stamp,business_days,day_class
+jobnumber,jobname,polenumber,houseno,address,city,zip,homephone,appointmentdate,appointmenttime,meetinglocation,staker,feeder,longitude,latitude,time_stamp,business_days,day_class
 50000000,John Doe_,99999,123,ABC,New York,3610,999-999-9999,6/30/2019,11:00,Take my horse down old town road,None,ZE50,-96.95533982,30.50728637,43619.61344,2081877,9999 Year
 50000001,John Doe_,99999,123,ABC,New York,3610,999-999-10000,7/1/2019,12:00,Take my horse down old town road,None,ZE51,-97.29850591,30.3156217,43619.61344,2,2 Business Days
 50000002,John Doe_,99999,123,ABC,New York,3610,999-999-10001,7/2/2019,13:00,Take my horse down old town road,None,ZE52,-96.64587286,30.32490719,43619.61344,2081863,9999 Year
