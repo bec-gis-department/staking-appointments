@@ -17,7 +17,8 @@ body <- dashboardBody(
                leafletOutput("map", height = 700)
            ),
            box(width = NULL,
-               DT::dataTableOutput("apttable")
+               DT::dataTableOutput("apttable")#,
+       #        setcolorder(x,c("8:00:00 AM","8:30:00 AM", "10:30:00 AM", "13:30:00"))
               
            )
     ),
@@ -35,7 +36,7 @@ body <- dashboardBody(
                  label = "Days until Appointment",
                  choices = c("Today" = 0, "Next Business Day" = 1, "2 Business Days" = 2,
                              "3 Business Days" = 3, "4 Business Days" = 4, "5 Business Days" = 5, "More than 5 business days out.."=9999),
-                 selected = c(0),
+                 selected = c(0,1,2,3,4,5,9999),
                  options = list(
                    'actions-box' = TRUE,
                    size = 5,

@@ -31,8 +31,8 @@ head(todays_Apps)
 # This should be pivoting the data but just isn't quite complete yet. so feel free to completely change this section up
 x <- todays_Apps %>%
   select(jobnumber, staker, appointmenttime)
-  group_by(staker, appointmenttime)
-  summarise(appointmenttime = first(appointmenttime))
+group_by(staker, appointmenttime)
+summarise(appointmenttime = first(appointmenttime))
 
 x %>%
   spread(appointmenttime, jobnumber)
@@ -44,7 +44,6 @@ head(x)
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")
 saveRDS(x, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/apt_table.rds")
-
 
 
 
