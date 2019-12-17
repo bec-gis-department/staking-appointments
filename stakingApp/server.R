@@ -2,7 +2,42 @@
 server <- function(input, output, session) {
   
   #Define Data Frame with Staking Appointments
-  data <- df  
+  data <- df
+  #Retrieve the value selected from the day class, feeder, and staker filter
+  #changed the filter to a reactive
+  #deleted the "dayclass <- input$dayClass" like expressions. 
+  filtered_apts <- reactive({
+    df %>%
+      filter(data$business_days %in% input$dayClass &    
+               data$staker %in% input$stakerFilter &    
+               data$feeder %in% input$feederFilter
+      )
+  })
+  # Setup a Lealfet Proxy to filter the Points
+  #added observe right before the leafletproxy function
+  observe(leafletProxy("map", data = filtered_apts()) %>%
+            clearMarkers() %>%
+            addCircleMarkers(lng = filtered_apts$Longitude,
+                             lat = filtered_apts$Latitude,
+                             fillColor  = "blue",
+                             color = "black",
+                             radius = 14,
+                             stroke = TRUE,
+                             weight = 2,
+                             fillOpacity = 0.5,
+                             #added in pathOptions
+                             options = pathOptions(pane = "markers"),
+                             popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",  
+                                           "<b>Job Name:</b>", df$jobname, "<br>",  
+                                           "<b>Pole Number:</b>",df$polenumber, "<br>",    
+                                           "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",  
+                                           "<b>Meeting Location:</b>", df$meetinglocation, "<br>",  
+                                           "<b>Appointment Time:</b>",df$appointmenttime, "<br>",  
+                                           "<b>Staker:</b>", df$staker, "<br>",  
+                                           "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
+          
+  # got error : Error in $: object of type 'closure' is not subsettable        
+  )
   
   ##Generate Map display
   # I want to use our custom mapbox style
@@ -22,51 +57,16 @@ server <- function(input, output, session) {
       addTiles(urlTemplate = bec_map, attribution = map_attr)
     
   })      
- observe({
     
-    #Retrieve the value selected from the day class, feeder, and staker filter
-    dayclass <- input$dayClass
-    ##print(dayclass)
-    feederfilter <- input$feederFilter  
-    ##print(feederfilter)
-    stakerfilter<- input$stakerFilter  
-    ##print(stakerfilter)
-    #Changed the == in the fiter to %in%
-    filtered_apts <- data %>% filter(
-      data$business_days %in% dayclass &    
-        data$staker %in% stakerfilter &    
-        data$feeder %in% feederfilter
-    )
+    
     #** Output Shit **
-    print(filtered_apts$jobnumber) #, filtered_apts$Longitude, filtered_apts$Latitude)
-    print(filtered_apts$Longitude)
-    
-    # Setup a Lealfet Proxy to filter the Points
-    leafletProxy("map") %>% clearMarkers() %>%
-      addCircleMarkers(lng = filtered_apts$Longitude,
-                       lat = filtered_apts$Latitude,
-                       fillColor  = "blue",
-                       color = "black",
-                       radius = 14,
-                       stroke = TRUE,
-                       weight = 2,
-                       fillOpacity = 0.5,
-                       #added in pathOptions
-                       options = pathOptions(pane = "markers"),
-                       popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",  
-                                     "<b>Job Name:</b>", df$jobname, "<br>",  
-                                     "<b>Pole Number:</b>",df$polenumber, "<br>",    
-                                     "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",  
-                                     "<b>Meeting Location:</b>", df$meetinglocation, "<br>",  
-                                     "<b>Appointment Time:</b>",df$appointmenttime, "<br>",  
-                                     "<b>Staker:</b>", df$staker, "<br>",  
-                                     "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))
-    
+   # print(filtered_apts$jobnumber) #, filtered_apts$Longitude, filtered_apts$Latitude)
+   # print(filtered_apts$Longitude)
     
   
-  #----------------------------------------------------------------
-
-  })
+    #----------------------------------------------------------------
+    
   
- 
+  
+  
 }
