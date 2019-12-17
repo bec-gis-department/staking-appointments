@@ -1,14 +1,5 @@
 # Set the Server Variable
 server <- function(input, output, session) {
-  ##############################################
-  # Name: isochrone                                                                    
-  # Description:                              
-  # Construct Isochrone variable from map click to send to the OSRM Server                  
-  # Created: 06/03/2019                                                                          
-  # Author: John Lister - GIS Applications Developer                                                                        
-  # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/                                                
-  # By: Thomas Roh                                                                                      
-  
   
   #Define Data Frame with Staking Appointments
   data <- df  
