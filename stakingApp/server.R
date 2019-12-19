@@ -5,11 +5,12 @@ server <- function(input, output, session) {
   data <- df
   #Retrieve the value selected from the day class, feeder, and staker filter
   #changed the filter to a reactive
-  #deleted the "dayclass <- input$dayClass" like expressions. 
+  
+  
   filtered_apts <- reactive({
     df %>%
-      filter(data$business_days %in% input$dayClass &    
-               data$staker %in% input$stakerFilter &    
+      filter(data$business_days %in% input$dayClass,    
+               data$staker %in% input$stakerFilter,    
                data$feeder %in% input$feederFilter
       )
   })
@@ -28,7 +29,7 @@ server <- function(input, output, session) {
                              #added in pathOptions
                              options = pathOptions(pane = "markers"))
           ) 
-  
+  #when i run the app the filters are not working, all the points are appearing on the map but not changing when i select different options in the pickerinput.
   # Bluebonnet Electric Default Basemap
   bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
   map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
@@ -46,5 +47,10 @@ server <- function(input, output, session) {
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
   })
-  
+  #-----------------------------------------------
+  #Here is where the data table is started
+  output$apttable = DT::renderDataTable({
+    #added in the new table #sorted_apps
+    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", selected = 0, target="cell"))
+  })
 }
