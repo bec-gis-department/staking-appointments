@@ -17,8 +17,7 @@ body <- dashboardBody(
                leafletOutput("map", height = 700)
            ),
            box(width = NULL,
-               DT::dataTableOutput("apttable")#,
-       #        setcolorder(x,c("8:00:00 AM","8:30:00 AM", "10:30:00 AM", "13:30:00"))
+               DT::dataTableOutput("apttable")
               
            )
     ),
