@@ -26,7 +26,7 @@ body <- dashboardBody(
            box(width = NULL, status = "warning",
                
                #Changed uioutput to "dayClass
-               uiOutput("dayClassification"),
+               uiOutput("dayClass"),
                #Changed from multiple choice checkbox to multiple choice dropdown
                #Added Today with a value of 0 
                #chnaged the selectInput to a pickerInput
@@ -42,7 +42,38 @@ body <- dashboardBody(
                    'selected-text-format' = "count > 3"
                  ),
                  multiple = TRUE
-               )
+               ),
+              #filter by feeder
+              uiOutput("feederFilter"),
+              pickerInput(
+                inputId = "feederFilter",
+                label = "Select Feeder(s):",
+                choices = sort(as.character(unique(df$feeder))),
+                selected = df$feeder,
+                options = list(
+                  'actions-box' = TRUE,
+                  size = 5,
+                  'selected-text-format' = "count > 3"
+                ),
+                multiple = TRUE
+                
+              ),
+             #filter by staker
+             uiOutput("stakerFilter"),
+             
+             pickerInput(
+               inputId = "stakerFilter",
+               label = "Select Staker(s)",
+               choices = sort(as.character(unique(df$staker))),
+               selected = df$staker,
+               options = list(
+                 'actions-box' = TRUE,
+                 size = 5,
+                 'selected-text-format' = "count > 3"
+               ),
+               multiple = TRUE
+             )
+  ##################### end of filters ######################################
       
     )
   )
