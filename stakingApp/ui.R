@@ -42,56 +42,8 @@ body <- dashboardBody(
                    'selected-text-format' = "count > 3"
                  ),
                  multiple = TRUE
-               ),
-               
-               #Filter by feeder, we'll load unique feeder values here
-               #sorted the feeder values randomly
-               uiOutput("feederFilter"),
-               pickerInput(
-                 inputId = "feederFilter",
-                 label = "Select Feeder(s):",
-                 choices = sort(as.character(unique(df$feeder))),
-                 selected = df$feeder,
-                 options = list(
-                   'actions-box' = TRUE,
-                   size = 5,
-                   'selected-text-format' = "count > 3"
-                 ),
-                 multiple = TRUE 
-                 
-               ),
-               
-               #We'll load unique staker values here
-               #sorted the staker values randomly
-               uiOutput("stakerFilter"),
-               
-               pickerInput(
-                 inputId = "stakerFilter",
-                 label = "Select Staker(s)",
-                 choices = sort(as.character(unique(df$staker))),
-                 selected = df$staker,
-                 options = list(
-                   'actions-box' = TRUE,
-                   size = 5,
-                   'selected-text-format' = "count > 3"
-                 ),
-                 multiple = TRUE
-               ),
-               ####################################################################################
-               
-               p(
-                 class = "text-muted",
-                 paste("Here we have filters allowing you to sort by Staker, Feeder and Day Classification"),
-                       
-                 p(
-                   class = "text-muted",
-                   paste("Click here to clear the Isochrone Drive Times from the map")
-                 
-               ),
-               #changed actionbutton to clear isochrones instead of apply filters
-               #This button will be used to clear the Isochrone polygons from the map
-               actionButton("cleariso", "Clear Isochrones", styleclass = "success")
-           )
+               )
+      
     )
   )
 )
