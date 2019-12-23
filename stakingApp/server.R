@@ -1,19 +1,46 @@
-# Set the Server Variable
+# Set the Server Variable 
 server <- function(input, output, session) {
+  ##############################################
+  # Name: isochrone                                                                    
+  # Description:                               
+  # Construct Isochrone variable from map click to send to the OSRM Server                  
+  # Created: 06/03/2019                                                                           
+  # Author: John Lister - GIS Applications Developer                                                                         
+  # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/                                                 
+  # By: Thomas Roh                                                                                      
+
   
   #Define Data Frame with Staking Appointments
+<<<<<<< HEAD
   data <- df
   #Retrieve the value selected from the day class, feeder, and staker filter
   #changed the filter to a reactive
+  bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
+  map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
   
+  #Render the Leaflet Map
+  output$map <- renderLeaflet({
+    data <- filtered_apts()     
+    leaflet(data = data) %>%    
+      setView(-97.285944, 30.104740, 9) %>%
+      #added two map panes for each layer
+      #  addMapPane("iso", zIndex = 420) %>% 
+      #   addMapPane("markers", zIndex = 430) %>% 
+      #added another map pane for the appointment table click event 
+      #   addMapPane("tblapts", zIndex = 440) %>%
+      addTiles(urlTemplate = bec_map, attribution = map_attr) 
+    
+  })
   
   filtered_apts <- reactive({
-    df %>%
-      filter(data$business_days %in% input$dayClass &    
-               data$staker %in% input$stakerFilter&    
-               data$feeder %in% input$feederFilter
-      )
+    data %>%
+      filter( (data$business_days %in% input$dayClassFilter     
+            #  data$staker %in% input$stakerFilter    
+            #  data$feeder %in% input$feederFilter    
+      ))
+    print(input$dayClassFilter)
   })
+  print(filtered_apts)
   # Setup a Lealfet Proxy to filter the Points
   #added observe right before the leafletproxy function
   observe(leafletProxy("map", data = filtered_apts()) %>%
@@ -27,64 +54,68 @@ server <- function(input, output, session) {
                              weight = 2,
                              fillOpacity = 0.5,
                              #added in pathOptions
-                             options = pathOptions(pane = "markers")) 
+                         #    options = pathOptions(pane = "markers")
+                         ) 
   )
   #when i run the app the filters are not working, all the points are appearing on the map but not changing when i select different options in the pickerinput.
   # Bluebonnet Electric Default Basemap
-  bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
-  map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
+ 
+=======
+  data <- df   
   
-  #Render the Leaflet Map
+  ##Generate Map display
+  # I want to use our custom mapbox style
+  bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjmaudm2mha1e2splkup0tc3s/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
+  
+  map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
   output$map <- renderLeaflet({
-    data <- data
-    leaflet(data = data) %>%    
+    df <- data
+    
+    leaflet(data = df) %>%    
       setView(-97.285944, 30.104740, 9) %>%
       #added two map panes for each layer
-      addMapPane("iso", zIndex = 420) %>% 
       addMapPane("markers", zIndex = 430) %>% 
       #added another map pane for the appointment table click event 
-      addMapPane("tblapts", zIndex = 440) %>%
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
-  })
-  #-----------------------------------------------
-  #Here is where the data table is started
-  
-  output$apttable = DT::renderDataTable({
-    #added in the new table #sorted_apps
-    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", selected= 0, target="cell"))
-  })
-  # Here is where we are filtering the map by the click event
+  })       
+  ########################################################################
+  # Here we are watching the Day classification, Feeder, and Staker filter
+  # NOTE: When we add the Data Table Filter functionality we want to make sure
+  #       - the Data Table is loaded before this observaion. IE Load it after output$map is declared
   observe({
-    selected_apt <- input$apttable_cell_clicked
-  #  This should be filtering the map, but it isn't...
-    filteredselected_apts <- data %>% filter(data$jobnumber == selected_apt$value)  
-    if(selected_apt > 0){
-  #Im getting the error "Error in : Result must have length 117, not 0"
-  #im trying to get the program to only run a new proxy if the selected_apt value is greater than 0 (0 being nothing selected) 
-  #i think i am close but i keep getting the same error, i know what that error means but i cant find where i can fix it    
-    #Here is our leaflet Proxy that sets the map visual (May be a good idea to functionalize this somehow because we re-use it per map filter -\_(",)_/-)
-    leafletProxy("map") %>% clearMarkers() %>%
-      addCircleMarkers(lng = filteredselected_apts$Longitude,
-                       lat = filteredselected_apts$Latitude,
-                       fillColor =  "blue",
+    
+    #Retrieve the value selected from the day class, feeder, and staker filter
+    dayclass <- input$dayClass
+
+    #Changed the == in the fiter to %in% 
+    filtered_apts <- data %>% filter(
+      data$business_days %in% dayclass
+    )
+    #Previewing Data in Console
+    print(filtered_apts)
+    
+    # Setup a Lealfet Proxy to filter the Points
+    leafletProxy("map") %>% clearMarkers() %>% 
+      addCircleMarkers(lng = filtered_apts$Longitude,
+                       lat = filtered_apts$Latitude,
+                       fillColor  = "blue",
                        color = "black",
-                       radius = 14,
                        stroke = TRUE,
                        weight = 2,
-                       fillOpacity = 0.7,
+                       fillOpacity = 0.5,
                        #added in pathOptions
-                       options = pathOptions(pane = "tblapts"))
-    }
-    # If the selected_apt value is not greater than 0, nothing happens.\
-    else{
-      return()
-    }
-    #  Just for the Memes we are printing the Job Number of the Cell we are Selecting
-    print(selected_apt$value)
-     })
-  
-
-  
-  
+                       options = pathOptions(pane = "markers"),
+                       popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",   
+                                     "<b>Job Name:</b>", df$jobname, "<br>",   
+                                     "<b>Pole Number:</b>",df$polenumber, "<br>",    
+                                     "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",   
+                                     "<b>Meeting Location:</b>", df$meetinglocation, "<br>",   
+                                     "<b>Appointment Time:</b>",df$appointmenttime, "<br>",   
+                                     "<b>Staker:</b>", df$staker, "<br>",   
+                                     "<b>Appointmet Date:</b>",df$appointmentdate, "<br>")) 
+    
+    
+  })
+>>>>>>> 4f40dd9ae442366649d163935534b09671525dc9
 }
