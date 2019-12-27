@@ -25,13 +25,14 @@ server <- function(input, output, session) {
       setView(-97.285944, 30.104740, 9) %>%
       #added two map panes for each layer
       addMapPane("markers", zIndex = 430) %>% 
-      #added another map pane for the appointment table click event 
+      #added another map pane for the appointment table click event
+      addMapPane("tblapts", zIndex = 440 ) %>%
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
   })
   #Here is where the data table is started
   output$apttable = DT::renderDataTable({
-    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", selected = 0, target="cell"))
+    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", target="cell"))
   })
   ########################################################################
   # Here we are watching the Day classification, Feeder, and Staker filter
@@ -51,7 +52,9 @@ server <- function(input, output, session) {
         data$feeder %in% feederfilter &
         data$staker %in% stakerfilter)
     #Previewing Data in Console
-    print(filtered_apts)
+    print(dayclass)
+    print(feederfilter)
+    print(stakerfilter)
     
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
@@ -75,4 +78,40 @@ server <- function(input, output, session) {
     
     
   })
+  #Here is where we are filtering the map by the click event
+ observe({ 
+    
+   selected_apt <- input$apttable_cell_clicked
+   # Just for the Memes we are printing the Job Number of the Cell we are Selecting
+   print(selected_apt$value)
+   # We only want to filter the map if a cell is clicked, if no cell is clicked, we want the map to load all points
+   # this if statement is looking if the value is NULL, if its NULL it does nothing, if else it runs the proxy
+   if (is.null(selected_apt$value)){
+    return()
+   } else {
+    # This is to filter the map based on the cell clicked in the data table
+    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
+    leafletProxy("map") %>%  clearMarkers() %>%
+      addCircleMarkers(lng = filteredselected_apts$Longitude,
+                       lat = filteredselected_apts$Latitude,
+                       fillColor =  "blue",
+                       color = "black",
+                       radius = 14,
+                       stroke = TRUE,
+                       weight = 2,
+                       fillOpacity = 0.7,
+                       #added in pathOptions
+                       options = pathOptions(pane = "tblapts"),
+                       popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",  
+                                     "<b>Job Name:</b>", df$jobname, "<br>",  
+                                     "<b>Pole Number:</b>",df$polenumber, "<br>",    
+                                     "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",  
+                                     "<b>Meeting Location:</b>", df$meetinglocation, "<br>",  
+                                     "<b>Appointment Time:</b>",df$appointmenttime, "<br>",  
+                                     "<b>Staker:</b>", df$staker, "<br>",  
+                                     "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))    }
+    
+  
+})   
+    
 }

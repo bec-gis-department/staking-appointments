@@ -4,6 +4,7 @@ library(dplyr)
 library(ggmap)
 library(DT)
 library(knitr)
+library(data.table)
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
 df = read.csv("C:/Dev/staking-appointments/Sample/sample_data.csv", header=TRUE, sep=",")
@@ -38,7 +39,7 @@ summarise(appointmenttime = first(appointmenttime))
 sorted_Apps <- x %>%
   spread(appointmenttime, jobnumber)
 
-#Use head(sorted_Apps) to preview data
+#Use head(sortedApps) to preview data
 head(sorted_Apps)
 #----------------------------------------------------------
 
