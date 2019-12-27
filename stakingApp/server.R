@@ -32,7 +32,7 @@ server <- function(input, output, session) {
   })
   #Here is where the data table is started
   output$apttable = DT::renderDataTable({
-    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", target="cell"))
+    datatable(at, rownames = TRUE, selection = list(mode= "single", target="cell"))
   })
   ########################################################################
   # Here we are watching the Day classification, Feeder, and Staker filter

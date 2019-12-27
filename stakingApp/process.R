@@ -45,7 +45,7 @@ head(sorted_Apps)
 
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/staking-appointments/stakingApp/staking_data.rds")
-saveRDS(x, "C:/Dev/staking-appointments/stakingApp/apt_table.rds")
+saveRDS(sorted_Apps, "C:/Dev/staking-appointments/stakingApp/apt_table.rds")
 
 
 
