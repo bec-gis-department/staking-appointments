@@ -18,12 +18,16 @@ body <- dashboardBody(
            ),
            box(width = NULL,
                DT::dataTableOutput("apttable")
-              
            )
     ),
     ###################### Start of Filters #################################    
     column(width = 3,
            box(width = NULL, status = "warning",
+               p(
+                 class= "text-muted",
+                 paste("Here we have filters allowing you to sort by Day Classification, Feeder, and Staker")
+                 
+               ),
                
                #Changed uioutput to "dayClass
                uiOutput("dayClass"),
@@ -72,9 +76,16 @@ body <- dashboardBody(
                  'selected-text-format' = "count > 3"
                ),
                multiple = TRUE
-             )
-  ##################### end of filters ######################################
+             ),
+  #############################################################
+  p(
+    class= "text-muted",
+    paste("Click below to clear the isochrones from the map")
+    
+  ),
       
+  #We use this actionbutton to clear isochrones
+  actionButton("cleariso", "Clear Isochrones")
     )
   )
 )
