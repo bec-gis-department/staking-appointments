@@ -1,4 +1,4 @@
-library(reshape)
+library(reshape2)
 library(tidyverse)
 library(dplyr)
 library(ggmap)
@@ -24,20 +24,16 @@ head(todays_Apps)
 
 #This is somewhat on the right track but isn't working as needed
 # The idea here is to say:
-#   1) Hey I want todays appointments in a variable called X,
-#   2) I Only want the Job Number, Staker Name and Appointment Time to come through
-#   3) Group my data by Staker and Appointment Time
-#   4) This pivot requires a data summary so I tell it just get the first Staking Time on the resolution I provided (Which won't change the format... just a seemingly reundant step)
+# 1) Hey I want todays appointments in a variable called X,
+# 2) I Only want the Job Number, Staker Name and Appointment Time to come through
+# 3) Group my data by Staker and Appointment Time
+# 4) This pivot requires a data summary so I tell it just get the first Staking Time on the resolution I provided (Which won't change the format... just a seemingly reundant step)
 
-# This should be pivoting the data but just isn't quite complete yet. so feel free to completely change this section up
-x <- todays_Apps %>%
-  select(jobnumber, staker, appointmenttime)
-group_by(staker, appointmenttime)
-summarise(appointmenttime = first(appointmenttime))
-#made a new table based off the output of the spread function so i can use this table to output the datatable in server.R
-#the app now correctly displays the pivottable 
-sorted_Apps <- x %>%
-  spread(appointmenttime, jobnumber)
+# added in melt to breakdown the table to only these two variables
+p <- melt(x, id.var = c("staker", "appointmenttime"))
+head(p)
+#sorted_Apps is created by cast, which puts staker as the row values and appointment time as the column values 
+sorted_Apps <- dcast(p, staker ~ appointmenttime, fun.aggregate = mean, drop=FALSE, fill = NULL)
 
 #Use head(sortedApps) to preview data
 head(sorted_Apps)

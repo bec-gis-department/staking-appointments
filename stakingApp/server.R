@@ -7,10 +7,10 @@ server <- function(input, output, session) {
   # Created: 06/03/2019                                                                           
   # Author: John Lister - GIS Applications Developer                                                                         
   # Adapted From Example: https://www.r-bloggers.com/shiny-app-drive-time-isochrones/                                                 
-  # By: Thomas Roh  
-  isochrone <- eventReactive(c(input$map_click, input$map_shape_click), {
-    if(is.null(input$map_shape_click)){
-      ## Get the click info from the map
+  # By: Thomas Roh               
+  isochrone <- eventReactive(c(input$map_click, input$map_shape_click), {                
+    if(is.null(input$map_shape_click)){            
+      ## Get the click info from the map                
       click <- input$map_click
       clat <- click$lat
       clng <- click$lng
@@ -54,6 +54,7 @@ server <- function(input, output, session) {
   output$apttable = DT::renderDataTable({
     datatable(at, rownames = TRUE, selection = list(mode= "single", target="cell"))
   })
+ # setcolorder(at, c("staker","7:00:00 AM", "8:00:00 AM", "8:30:00 AM", "10:30:00 AM", "13:30:00", "15:30:00", "24:30:00" ))
   ########################################################
   # Name: getColor
   # Description: Read loaded day_class value and produce a marker colour variable
