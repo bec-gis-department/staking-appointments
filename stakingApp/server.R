@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   output$apttable = DT::renderDataTable({
     datatable(at, rownames = TRUE, selection = list(mode= "single", target="cell"))
   })
- # setcolorder(at, c("staker","7:00:00 AM", "8:00:00 AM", "8:30:00 AM", "10:30:00 AM", "13:30:00", "15:30:00", "24:30:00" ))
+  # setcolorder(at, c("staker","7:00:00 AM", "8:00:00 AM", "8:30:00 AM", "10:30:00 AM", "13:30:00", "15:30:00", "24:30:00" ))
   ########################################################
   # Name: getColor
   # Description: Read loaded day_class value and produce a marker colour variable
@@ -128,8 +128,8 @@ server <- function(input, output, session) {
     
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
-      addCircleMarkers(lng = filtered_apts$Longitude,
-                       lat = filtered_apts$Latitude,
+      addCircleMarkers(lng = filtered_apts$longitude,
+                       lat = filtered_apts$latitude,
                        color = getColor(filtered_apts$buisness_days),
                        radius= getSize(filtered_apts$buisness_days),
                        stroke = FALSE,
@@ -147,82 +147,82 @@ server <- function(input, output, session) {
     
   })
   #Here is where we are filtering the map by the click event
- observe({ 
+  observe({ 
     
-   selected_apt <- input$apttable_cell_clicked
-   # Just for the Memes we are printing the Job Number of the Cell we are Selecting
-   print(selected_apt$value)
-   # We only want to filter the map if a cell is clicked, if no cell is clicked, we want the map to load all points
-   # this if statement is looking if the value is NULL, if its NULL it does nothing, if else it runs the proxy
-   if (is.null(selected_apt$value)){
-    return()
-   } else {
-    # This is to filter the map based on the cell clicked in the data table
-    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
-    leafletProxy("map") %>%  clearMarkers() %>%
-      addCircleMarkers(lng = filteredselected_apts$Longitude,
-                       lat = filteredselected_apts$Latitude,
-                       fillColor =  "blue",
-                       color = "black",
-                       radius = 14,
-                       stroke = TRUE,
-                       weight = 2,
-                       fillOpacity = 0.7,
-                       #added in pathOptions
-                       options = pathOptions(pane = "tblapts"),
-                       popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",  
-                                     "<b>Job Name:</b>", df$jobname, "<br>",  
-                                     "<b>Pole Number:</b>",df$polenumber, "<br>",    
-                                     "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",  
-                                     "<b>Meeting Location:</b>", df$meetinglocation, "<br>",  
-                                     "<b>Appointment Time:</b>",df$appointmenttime, "<br>",  
-                                     "<b>Staker:</b>", df$staker, "<br>",  
-                                     "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))    }
-}) 
- #Wherever you click on the map will generate the drivetime Isochrones
- observeEvent(c(input$map_click, input$map_shape_click) , {
-   #Validate which event is happening
-   if(is.null(input$map_shape_click)){
-     ## Get the click info from the map
-     click <- input$map_click
-     clat <- click$lat
-     clng <- click$lng
-   }
-   else if(is.null(input$map_click)){
-     ## Get the click info from the map
-     click <- input$map_shape_click
-     clat <- click$lat
-     clng <- click$lng    
-   }
-   
-   #Build the Isochrone Steps
-   steps <- sort(as.numeric(seq(10,35,5)))
-   #shinyalert(steps)
-   isochrone <- cbind(steps = steps[isochrone()[['id']]], isochrone())
-   pal <- colorFactor(viridis::viridis(nrow(isochrone), direction = -1),
-                      isochrone$steps)
-   leafletProxy("map") %>%
-     clearShapes() %>%
-     #clearMarkers() %>%
-     clearControls() %>%
-     addPolygons(data = isochrone,
-                 weight = .5,
-                 color = ~pal(steps)) %>%
-     addLegend(data = isochrone,
-               pal = pal,
-               values = ~steps,
-               title = 'Drive Time (min.)',
-               opacity = 1) %>%
-     #addMarkers(lng = clng, clat) %>%
-     setView(clng, clat, zoom = 9)
- })
- # Isochrone Clear Event
- observe({
-   if(input$cleariso==0)
-     return()
-   else
-     leafletProxy("map") %>%
-     clearShapes() %>%
-     clearControls()
- })  
+    selected_apt <- input$apttable_cell_clicked
+    # Just for the Memes we are printing the Job Number of the Cell we are Selecting
+    print(selected_apt$value)
+    # We only want to filter the map if a cell is clicked, if no cell is clicked, we want the map to load all points
+    # this if statement is looking if the value is NULL, if its NULL it does nothing, if else it runs the proxy
+    if (is.null(selected_apt$value)){
+      return()
+    } else {
+      # This is to filter the map based on the cell clicked in the data table
+      filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
+      leafletProxy("map") %>%  clearMarkers() %>%
+        addCircleMarkers(lng = filteredselected_apts$longitude,
+                         lat = filteredselected_apts$latitude,
+                         fillColor =  "blue",
+                         color = "black",
+                         radius = 14,
+                         stroke = TRUE,
+                         weight = 2,
+                         fillOpacity = 0.7,
+                         #added in pathOptions
+                         options = pathOptions(pane = "tblapts"),
+                         popup = paste("<h2>", df$jobnumber,"</h2>", "<br>",  
+                                       "<b>Job Name:</b>", df$jobname, "<br>",  
+                                       "<b>Pole Number:</b>",df$polenumber, "<br>",    
+                                       "<b>Address:</b>", df$houseno," ",df$address," ", "<br>",  
+                                       "<b>Meeting Location:</b>", df$meetinglocation, "<br>",  
+                                       "<b>Appointment Time:</b>",df$appointmenttime, "<br>",  
+                                       "<b>Staker:</b>", df$staker, "<br>",  
+                                       "<b>Appointmet Date:</b>",df$appointmentdate, "<br>"))    }
+  }) 
+  #Wherever you click on the map will generate the drivetime Isochrones
+  observeEvent(c(input$map_click, input$map_shape_click) , {
+    #Validate which event is happening
+    if(is.null(input$map_shape_click)){
+      ## Get the click info from the map
+      click <- input$map_click
+      clat <- click$lat
+      clng <- click$lng
+    }
+    else if(is.null(input$map_click)){
+      ## Get the click info from the map
+      click <- input$map_shape_click
+      clat <- click$lat
+      clng <- click$lng    
+    }
+    
+    #Build the Isochrone Steps
+    steps <- sort(as.numeric(seq(10,35,5)))
+    #shinyalert(steps)
+    isochrone <- cbind(steps = steps[isochrone()[['id']]], isochrone())
+    pal <- colorFactor(viridis::viridis(nrow(isochrone), direction = -1),
+                       isochrone$steps)
+    leafletProxy("map") %>%
+      clearShapes() %>%
+      #clearMarkers() %>%
+      clearControls() %>%
+      addPolygons(data = isochrone,
+                  weight = .5,
+                  color = ~pal(steps)) %>%
+      addLegend(data = isochrone,
+                pal = pal,
+                values = ~steps,
+                title = 'Drive Time (min.)',
+                opacity = 1) %>%
+      #addMarkers(lng = clng, clat) %>%
+      setView(clng, clat, zoom = 9)
+  })
+  # Isochrone Clear Event
+  observe({
+    if(input$cleariso==0)
+      return()
+    else
+      leafletProxy("map") %>%
+      clearShapes() %>%
+      clearControls()
+  })  
 }

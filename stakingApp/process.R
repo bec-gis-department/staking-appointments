@@ -7,20 +7,20 @@ library(knitr)
 library(data.table)
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
-df = read.csv("C:/Dev/staking-appointments/Sample/sample_data.csv", header=TRUE, sep=",")
-#head(df)
+df = read.csv("C:/Dev/staking-appointments/Sample/staking_data.csv", header=TRUE, sep=",")
+head(df)
 
 #-----------------------------------------------------------------
 #Ensure the lat & lon are Numeric Values
 #Toss the NULLS
-df$Latitude <- as.numeric(df$latitude)
-df$Longitude <- as.numeric(df$longitude)
+df$latitude <- as.numeric(df$latitude)
+df$longitude <- as.numeric(df$longitude)
 
 #-----------Here we format the Data Table-------------------
 #Filter the main Staking Data Frame to only have Todays appointments
-todays_Apps <- filter(df, df$day_class == "Today")
+x <- filter(df, df$day_class == "Today")
 # Head shows us the DF in the console, it's a goodway to ensure the DF is formatted the way we want it
-head(todays_Apps)
+head(x)
 
 #This is somewhat on the right track but isn't working as needed
 # The idea here is to say:
@@ -33,7 +33,7 @@ head(todays_Apps)
 p <- melt(x, id.var = c("staker", "appointmenttime"))
 head(p)
 #sorted_Apps is created by cast, which puts staker as the row values and appointment time as the column values 
-sorted_Apps <- dcast(p, staker ~ appointmenttime, fun.aggregate = mean, drop=FALSE, fill = NULL)
+sorted_Apps <- dcast(p, staker ~ appointmenttime, fun.aggregate = mean, drop= TRUE, fill = NULL)
 
 #Use head(sortedApps) to preview data
 head(sorted_Apps)
