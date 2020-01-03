@@ -6,7 +6,9 @@ library(DT)
 library(knitr)
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
-df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Sample/staking_data.csv", header=TRUE, sep=",")
+
+df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Data/staking_data.csv", header=TRUE, sep=",")
+
 #head(df)
 
 #-----------------------------------------------------------------
@@ -31,11 +33,13 @@ head(todays_Apps)
 # This should be pivoting the data but just isn't quite complete yet. so feel free to completely change this section up
 x <- todays_Apps %>%
   select(jobnumber, staker, appointmenttime)
-  group_by(staker, appointmenttime)
-  summarise(appointmenttime = first(appointmenttime))
-
-x %>%
+group_by(staker, appointmenttime)
+summarise(appointmenttime = first(appointmenttime))
+#made a new table based off the output of the spread function so i can use this table to output the datatable in server.R
+#the app now correctly displays the pivottable 
+sorted_Apps <- x %>%
   spread(appointmenttime, jobnumber)
+
 
 #Use head(x) to preview data
 head(x)
@@ -44,6 +48,7 @@ head(x)
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")
 saveRDS(x, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/apt_table.rds")
+
 
 
 
