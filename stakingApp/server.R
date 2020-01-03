@@ -28,7 +28,11 @@ server <- function(input, output, session) {
       #added another map pane for the appointment table click event 
       addTiles(urlTemplate = bec_map, attribution = map_attr) 
     
-  })       
+  })
+  #Here is where the data table is started
+  output$apttable = DT::renderDataTable({
+    datatable(sorted_Apps, rownames = TRUE, selection = list(mode= "single", selected = 0, target="cell"))
+  })
   ########################################################################
   # Here we are watching the Day classification, Feeder, and Staker filter
   # NOTE: When we add the Data Table Filter functionality we want to make sure
@@ -37,11 +41,15 @@ server <- function(input, output, session) {
     
     #Retrieve the value selected from the day class, feeder, and staker filter
     dayclass <- input$dayClass
+    feederfilter <- input$feederFilter
+    stakerfilter <- input$stakerFilter
+    
 
     #Changed the == in the fiter to %in% 
     filtered_apts <- data %>% filter(
-      data$business_days %in% dayclass
-    )
+      data$business_days %in% dayclass &
+        data$feeder %in% feederfilter &
+        data$staker %in% stakerfilter)
     #Previewing Data in Console
     print(filtered_apts)
     
