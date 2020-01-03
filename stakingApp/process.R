@@ -6,7 +6,9 @@ library(DT)
 library(knitr)
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
-df = read.csv("C:/Dev/staking-appointments/Sample/sample_data.csv", header=TRUE, sep=",")
+
+df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Data/staking_data.csv", header=TRUE, sep=",")
+
 #head(df)
 
 #-----------------------------------------------------------------
@@ -38,13 +40,16 @@ summarise(appointmenttime = first(appointmenttime))
 sorted_Apps <- x %>%
   spread(appointmenttime, jobnumber)
 
-#Use head(sorted_Apps) to preview data
-head(sorted_Apps)
+
+#Use head(x) to preview data
+head(x)
 #----------------------------------------------------------
 
 #Generate RDS file for fast mapping
-saveRDS(df, "C:/Dev/staking-appointments/stakingApp/staking_data.rds")
-saveRDS(x, "C:/Dev/staking-appointments/stakingApp/apt_table.rds")
+saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")
+saveRDS(x, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/apt_table.rds")
+
+
 
 
 
