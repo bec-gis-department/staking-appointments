@@ -38,7 +38,7 @@ body <- dashboardBody(
                  inputId = "dayClass",
                  label = "Days until Appointment",
                  choices = c("Today" = 0, "Next Business Day" = 1, "2 Business Days" = 2,
-                             "3 Business Days" = 3, "4 Business Days" = 4, "5 Business Days" = 5, "More than 5 business days out.."=9999),
+                             "3 Business Days" = 3, "4 Business Days" = 4, "5 Business Days" = 5, "More than 5 business days out.."=6),
                  selected = c(0,1,2,3,4,5,9999),
                  options = list(
                    'actions-box' = TRUE,

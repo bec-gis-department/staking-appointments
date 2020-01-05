@@ -25,7 +25,7 @@ server <- function(input, output, session) {
     withProgress(message = 'Sending Request',
                  isochrone <- osrmIsochrone(loc = c(clng,clat),
                                             breaks = sort(as.numeric(seq(10,35,5))),
-                                            res = 40) %>%
+                                            res = 50) %>%
                    st_as_sf()
     )
     isochrone
@@ -33,15 +33,13 @@ server <- function(input, output, session) {
   #------------------------Define Data Frame with Staking Appointments--------------------------------------
   df <- readRDS(data_file)
   at <- readRDS(pivottable)
-  data <- df   
-  
+
   ##Generate Map display
   # I want to use our custom mapbox style
   bec_map <- "https://api.mapbox.com/styles/v1/gisjohnbb/cjv6uvdep11e51gp35vjkc74w/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2lzam9obmJiIiwiYSI6ImNqbHptM2g3YTBxcWozdm53bXJrOWxwcWwifQ.3zAsFMWc6_CrtYSvEyNl9w"
   
   map_attr <- 'John Lister - GIS Applications Developer | Brandon Mitschke - GIS Applications Student'
   output$map <- renderLeaflet({
-    df <- data
     
     leaflet(data = df) %>%    
       setView(-97.285944, 30.104740, 9) %>%
@@ -69,11 +67,12 @@ server <- function(input, output, session) {
     stakerfilter <- input$stakerFilter
     
     #Changed the == in the fiter to %in% 
-    filtered_apts <- data %>% filter(
-      data$business_days %in% dayclass &
-        data$feeder %in% feederfilter &
-        data$staker %in% stakerfilter)
+    filtered_apts <- df %>% filter(
+      df$business_days %in% dayclass &
+        df$feeder %in% feederfilter &
+        df$staker %in% stakerfilter)
     
+    #print(filtered_apts)
     ########################################################
     # Name: getColor
     # Description: Read loaded day_class value and produce a marker colour variable
@@ -128,6 +127,7 @@ server <- function(input, output, session) {
         } })
     }
     
+    print(filtered_apts)
     # Setup a Lealfet Proxy to filter the Points
     leafletProxy("map") %>% clearMarkers() %>% 
       addCircleMarkers(lng = filtered_apts$longitude,
@@ -144,7 +144,8 @@ server <- function(input, output, session) {
                        popup = paste("<h2>", filtered_apts$jobnumber,"</h2>", "<br>",   
                                      "<b>Job Name:</b>", filtered_apts$jobname, "<br>",   
                                      "<b>Pole Number:</b>",filtered_apts$polenumber, "<br>",    
-                                     "<b>Address:</b>", filtered_apts$houseno," ",filtered_apts$address," ", "<br>",   
+                                     "<b>Address:</b>", filtered_apts$houseno," ",filtered_apts$address," ", "<br>",
+                                     "<b>Phone Number:</b>", filtered_apts$homephone, "<br>",
                                      "<b>Meeting Location:</b>", filtered_apts$meetinglocation, "<br>",   
                                      "<b>Appointment Time:</b>",filtered_apts$appointmenttime, "<br>",   
                                      "<b>Staker:</b>", filtered_apts$staker, "<br>",
@@ -163,7 +164,7 @@ server <- function(input, output, session) {
     return()
    } else {
     # This is to filter the map based on the cell clicked in the data table
-    filteredselected_apts <- data %>% filter(data$jobnumber %in% selected_apt$value)
+    filteredselected_apts <- df %>% filter(df$jobnumber %in% df$value)
     leafletProxy("map") %>%  clearMarkers() %>%
       addCircleMarkers(lng = filteredselected_apts$longitude,
                        lat = filteredselected_apts$latitude,
@@ -178,8 +179,9 @@ server <- function(input, output, session) {
                        popup = paste("<h2>", filteredselected_apts$jobnumber,"</h2>", "<br>",  
                                      "<b>Job Name:</b>", filteredselected_apts$jobname, "<br>",  
                                      "<b>Pole Number:</b>",filteredselected_apts$polenumber, "<br>",    
-                                     "<b>Address:</b>", filteredselected_apts$houseno," ",df$address," ", "<br>",  
-                                     "<b>Meeting Location:</b>", filteredselected_apts$meetinglocation, "<br>",  
+                                     "<b>Address:</b>", filteredselected_apts$houseno," ",df$address," ", "<br>",
+                                     "<b>Phone Number:</b>", filteredselected_apts$homephone, "<br>",
+                                     "<b>Meeting Location:</b>", filteredselected_apts$meetinglocation, "<br>",
                                      "<b>Appointment Time:</b>",filteredselected_apts$appointmenttime, "<br>",  
                                      "<b>Staker:</b>", filteredselected_apts$staker, "<br>",  
                                      "<b>Appointmet Date:</b>",filteredselected_apts$appointmentdate, "<br>"))    }
@@ -212,6 +214,7 @@ server <- function(input, output, session) {
      clearControls() %>%
      addPolygons(data = isochrone,
                  weight = .5,
+                 opacity = 0.5,
                  color = ~pal(steps)) %>%
      addLegend(data = isochrone,
                pal = pal,
