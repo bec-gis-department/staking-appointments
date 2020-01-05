@@ -4,18 +4,18 @@ library(dplyr)
 library(ggmap)
 library(DT)
 library(knitr)
+library(data.table)
+library(chron)
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
-
-df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Data/staking_data.csv", header=TRUE, sep=",")
-
-#head(df)
+df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Data/staking_data.csv", header=TRUE, sep=",") #C:\Dev\Staking Isochrone\bkm24-main\staking-appointments\Sample
+head(df)
 
 #-----------------------------------------------------------------
 #Ensure the lat & lon are Numeric Values
 #Toss the NULLS
-df$Latitude <- as.numeric(df$latitude)
-df$Longitude <- as.numeric(df$longitude)
+df$latitude <- as.numeric(df$latitude)
+df$longitude <- as.numeric(df$longitude)
 
 #-----------Here we format the Data Table-------------------
 #Filter the main Staking Data Frame to only have Todays appointments
@@ -33,23 +33,46 @@ head(todays_Apps)
 # This should be pivoting the data but just isn't quite complete yet. so feel free to completely change this section up
 x <- todays_Apps %>%
   select(jobnumber, staker, appointmenttime)
-group_by(staker, appointmenttime)
-summarise(appointmenttime = first(appointmenttime))
-#made a new table based off the output of the spread function so i can use this table to output the datatable in server.R
-#the app now correctly displays the pivottable 
-sorted_Apps <- x %>%
-  spread(appointmenttime, jobnumber)
-
-
-#Use head(x) to preview data
 head(x)
+
+#-----------------------------------------------
+# Ordering the Appointment Times 
+# John Lister - GIS Applications Developer
+
+#Convert the values to a Time 
+appTime_conv <- chron(x$appointmenttime)
+
+hourSubstr <- substr(x$appointmenttime, 0, 2)
+hourSubstr <-gsub(":","", hourSubstr)
+print(hourSubstr)
+
+intHour <- as.numeric(hourSubstr)
+print(intHour)
+
+orderVector <- sort(as.numeric(hourSubstr))
+print(orderVector)
+
+orderVector_STR <- unique(as.character(orderVector))
+print(timeCols)
+
+#Find Matching Hour 
+##i <- match(substring(x$appointmenttime, 1, 1), orderVector_STR)
+##o <- order(i)
+
+#Melt Data
+p <- melt(x, id.var = c("staker", "appointmenttime"))
+head(p)
+
+#DCAST Data to Data Table Format
+sortedApps <- dcast(p, staker ~ appointmenttime, fun.aggregate = min, drop=FALSE, fill=NULL)
+#sortedApps[timeCols]
+#made a new table based off the output of the spread function so i can use this table to output the datatable in server.R
+head(sortedApps)
 #----------------------------------------------------------
 
 #Generate RDS file for fast mapping
 saveRDS(df, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/staking_data.rds")
-saveRDS(x, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/apt_table.rds")
-
-
+saveRDS(sortedApps, "C:/Dev/Staking Isochrone/staking-appointments/stakingApp/apt_table.rds")
 
 
 

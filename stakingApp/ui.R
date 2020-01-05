@@ -1,11 +1,11 @@
 # UI File contains Look & Layout for the application
-title <- tags$img(src="whitelogo.png",
-                  height = '50',width = '50', ' ',
+title <- tags$img(src="https://www.bluebonnetelectric.coop/public/img/bluebonnet-logo_172x38@2x.png",
+                  height = '38',width = '172', '    ',
                   'Staking Appointments')
 
 header <- dashboardHeader(
   
-  title = title, titleWidth = 300)
+  title = title, titleWidth = 500)
 body <- dashboardBody(
   fluidRow(
     column(width = 9,
@@ -14,16 +14,20 @@ body <- dashboardBody(
                #Key Note: John Lister 06/05/2019)
                #Changed the map tag value to be "map"
                #This was the only way the Event Observation would work
-               leafletOutput("map", height = 700)
+               leafletOutput("map", height = 550)
            ),
            box(width = NULL,
                DT::dataTableOutput("apttable")
-              
            )
     ),
     ###################### Start of Filters #################################    
     column(width = 3,
-           box(width = NULL, status = "warning",
+           box(width = NULL, status = "info",
+               p(
+                 class= "text-muted",
+                 paste("")
+                 
+               ),
                
                #Changed uioutput to "dayClass
                uiOutput("dayClass"),
@@ -43,45 +47,55 @@ body <- dashboardBody(
                  ),
                  multiple = TRUE
                ),
-              #filter by feeder
-              uiOutput("feederFilter"),
-              pickerInput(
-                inputId = "feederFilter",
-                label = "Select Feeder(s):",
-                choices = sort(as.character(unique(df$feeder))),
-                selected = df$feeder,
-                options = list(
-                  'actions-box' = TRUE,
-                  size = 5,
-                  'selected-text-format' = "count > 3"
-                ),
-                multiple = TRUE
-                
-              ),
-             #filter by staker
-             uiOutput("stakerFilter"),
-             
-             pickerInput(
-               inputId = "stakerFilter",
-               label = "Select Staker(s)",
-               choices = sort(as.character(unique(df$staker))),
-               selected = df$staker,
-               options = list(
-                 'actions-box' = TRUE,
-                 size = 5,
-                 'selected-text-format' = "count > 3"
+               #filter by feeder
+               uiOutput("feederFilter"),
+               pickerInput(
+                 inputId = "feederFilter",
+                 label = "Select Feeder(s):",
+                 choices = sort(as.character(unique(df$feeder))),
+                 selected = df$feeder,
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE
+                 
                ),
-               multiple = TRUE
-             )
-  ##################### end of filters ######################################
-      
+               #filter by staker
+               uiOutput("stakerFilter"),
+               
+               pickerInput(
+                 inputId = "stakerFilter",
+                 label = "Select Staker(s)",
+                 choices = sort(as.character(unique(df$staker))),
+                 selected = df$staker,
+                 options = list(
+                   'actions-box' = TRUE,
+                   size = 5,
+                   'selected-text-format' = "count > 3"
+                 ),
+                 multiple = TRUE
+               ),
+               #############################################################
+               p(
+                 class= "text-muted",
+                 paste("Click below to clear the isochrones from the map")
+                 
+               ),
+               
+               #We use this actionbutton to clear isochrones
+               actionButton("cleariso", "Clear Isochrones")
+               
+           )
     )
   )
 )
-)
 #Set the UI Parameter to receive the Constructed Dashboard Components
-ui <- dashboardPage(
-  header,
-  dashboardSidebar(disable = TRUE),
-  body
-)
+ui <- function(req) {
+  dashboardPage(
+    header,
+    dashboardSidebar(disable = TRUE),
+    body
+  )
+}
