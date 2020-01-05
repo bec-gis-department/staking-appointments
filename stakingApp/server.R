@@ -118,7 +118,7 @@ server <- function(input, output, session) {
           7  
         } else if(type_ == '4 Business Days') {
           6
-        } else if(type_ == '5 or More Business Days') {
+        } else if(type_ == '5 Business Days') {
           4  
         } else if(type_ == 'More than 5 business days') {
           2  
