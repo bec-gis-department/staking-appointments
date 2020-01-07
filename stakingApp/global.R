@@ -7,21 +7,14 @@ library(shinythemes)
 library(shinyalert)
 library(shinyWidgets)
 library(osrm)
-library(rgdal)
-library(sp)
-library(sf)
 library(viridis)
-library(data.table)
 library(reshape)
-library(tidyverse)
 library(ggmap)
-library(knitr)
-library(data.table)
-library(chron)
+
 
 #Load CSV data in Dataframe
 #You'll have to update this path to wherever the Sample Data lives in your environment
-df = read.csv("C:/Dev/Staking Isochrone/staking-appointments/Data/staking_data.csv", header=TRUE, sep=",") #C:\Dev\Staking Isochrone\bkm24-main\staking-appointments\Sample
+df = read.csv("//bec-home/tableau/Dev/MemSvc/New Service Team/Staking Jobs/Data/staking_data.csv", header=TRUE, sep=",") #C:\Dev\Staking Isochrone\bkm24-main\staking-appointments\Sample
 
 #-----------------------------------------------------------------
 #Ensure the lat & lon are Numeric Values
