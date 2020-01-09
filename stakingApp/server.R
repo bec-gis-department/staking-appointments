@@ -155,6 +155,7 @@ server <- function(input, output, session) {
  observe({ 
     
    selected_apt <- input$apttable_cell_clicked
+   
    # Just for the Memes we are printing the Job Number of the Cell we are Selecting
    # We only want to filter the map if a cell is clicked, if no cell is clicked, we want the map to load all points
    # this if statement is looking if the value is NULL, if its NULL it does nothing, if else it runs the proxy
@@ -162,7 +163,8 @@ server <- function(input, output, session) {
     return()
    } else {
     # This is to filter the map based on the cell clicked in the data table
-    filteredselected_apts <- df %>% filter(df$jobnumber %in% df$value)
+    filteredselected_apts <- df %>% filter(df$jobnumber %in% selected_apt$value)
+    print(df)
     leafletProxy("map") %>%  clearMarkers() %>%
       addCircleMarkers(lng = filteredselected_apts$longitude,
                        lat = filteredselected_apts$latitude,

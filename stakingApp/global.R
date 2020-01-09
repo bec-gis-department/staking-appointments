@@ -8,7 +8,7 @@ library(shinyalert)
 library(shinyWidgets)
 library(osrm)
 library(viridis)
-library(reshape)
+library(reshape2)
 library(ggmap)
 
 
